@@ -204,19 +204,31 @@ Progress : <span id="abc"></span>
     }
         
   	function make() {
-  	    document.getElementById("abc").innerHTML = ds[0].i * 100 / frameCount + "%";
+  	    var sum = 0;
   	    
-        if(ds[0].i < frameCount) {
+  	    ms.forEach((m) => {sum += m.i});
+  	    ds.forEach((d) => {sum += d.i});
+  	
+  	    var perc = sum * 100 / frameCount / ms.length / ds.length;
+  	    
+  	    document.getElementById("abc").innerHTML = perc + "%";
+  	    
+        if(perc < 100) {
  
-            for(let k = 0;k < 4;++k)
+            for(let k = 0;k < 4;++k) {
            ms.forEach((m,j) => {
-               if(m.i < frameCount) m.play(myArrayBuffer,m.i,audioCtx.sampleRate,shuffle([2,3,4]).pop());
-     	       m.i += Math.round(0.125 * audioCtx.sampleRate * (j + 2));
+               if(m.i < frameCount) {
+                    m.play(myArrayBuffer,m.i,audioCtx.sampleRate,shuffle([2,3,4]).pop());
+     	            m.i += Math.round(0.125 * audioCtx.sampleRate * (j + 2));
+     	       } else m.i = frameCount;
             });
             ds.forEach((d) => {
-               if(d.i < frameCount) d.play(myArrayBuffer,d.i,0,audioCtx.sampleRate);
-     	       d.i += Math.round(0.125 * audioCtx.sampleRate * 2);
+               if(d.i < frameCount) {
+                    d.play(myArrayBuffer,d.i,0,audioCtx.sampleRate);
+         	       d.i += Math.round(0.125 * audioCtx.sampleRate * 2);
+         	   } else d.i = frameCount;
             });
+            }
      	       window.setTimeout(make,10);
      	   } else {
      	        computing = false;
