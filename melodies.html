@@ -210,11 +210,11 @@ Progress : <span id="abc"></span>
  
             for(let k = 0;k < 4;++k)
            ms.forEach((m,j) => {
-               m.play(myArrayBuffer,m.i,audioCtx.sampleRate,shuffle([2,3,4]).pop());
+               if(m.i < frameCount) m.play(myArrayBuffer,m.i,audioCtx.sampleRate,shuffle([2,3,4]).pop());
      	       m.i += Math.round(0.125 * audioCtx.sampleRate * (j + 2));
             });
             ds.forEach((d) => {
-                d.play(myArrayBuffer,d.i,0,audioCtx.sampleRate);
+               if(d.i < frameCount) d.play(myArrayBuffer,d.i,0,audioCtx.sampleRate);
      	       d.i += Math.round(0.125 * audioCtx.sampleRate * 2);
             });
      	       window.setTimeout(make,10);
