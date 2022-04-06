@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+        <title>Hello, World!</title>
+    </head>
+    <body>
+        <h1>
+            Hello, World!
+        </h1>
+        
+        <script >
+            
+            function speak() {
+            var msg = new SpeechSynthesisUtterance();
+            msg.volume = 1; // 0 to 1 	
+            msg.rate = 0.25 + 0.75 * Math.random(); // 0.1 to 10 
+            msg.pitch = Math.pow(2.0,Math.round(12.0 * Math.random()) / 12.0); //0 to 2 	
+ 
+             if(Math.random() < 0.8){
+                
+            
+            msg.text = 'Haaaach ??'; 	
+           }else {
+                
+                xs = [
+                    "Ich liebe dich !!",
+                    "guut !!"
+                ];
+                
+                msg.text = xs[
+                    Math.trunc(
+                        xs.length *
+                    Math.random()
+                    )
+                    
+                    ];
+            }
+            msg.onend = function(e) { window.setTimeout(speak,Math.round(1000*Math.random() + 10))}; 	
+            speechSynthesis.speak(msg); 
+            }
+            
+        </script>
+        
+        <button onclick="speak()">haaaach</button>
+    </body>
+</html>
