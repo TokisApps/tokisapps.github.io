@@ -79,6 +79,47 @@ Progress : <span id="abc"></span>
 		    * (Math.atan(100 * f * f * (-this.thread.x - 10000 * (1 + 6 * e))) + Math.PI / 2);
     }).setOutput([200000]);
 
+    const add2base = gpu.createKernel(function (a,b,c,d,e,f,g) {
+    	let x = 441.0 * Math.PI * this.thread.x / 44100.0 * 2 * Math.PI * Math.pow(2.0,Math.trunc(-70)  / 12.0);    		
+		return Math.atan(
+				mypow(Math.sin(x),1.5 * a + 0.5) * 
+				(mypow(Math.cos(this.thread.x / (55 + 10 * d)),1.5 * b + 0.5) + (3 * c + 1))
+			) * 
+			(Math.atan(-0.1 * (x - (5 + 20 * e))) + Math.PI / 2);
+        //return buffer[this.thread.x + offset] + vol * Math.atan(1.5 * y)  / 5;
+    }).setOutput([200000]);
+
+    class Drum0 {
+        constructor(instrument,q,d) {
+            this.instrument = instrument;
+            this.index = 0;
+            this.q = q;
+            this.d = d;
+            this.tone = -Math.trunc(4 * Math.random());
+            this.i = 0;
+        }
+        
+        play(buffer,offset,tone,sampleRate) {
+            if(this.index % this.q == this.d) {
+                this.instrument.render(buffer,offset,this.tone,sampleRate,3.0,100);
+            }
+            this.index += 1;
+        }
+    }
+
+    class Drum {
+        constructor(instrument) {
+            this.instrument = instrument;
+            this.tone = -Math.trunc(4 * Math.random());
+            this.i = 0;
+        }
+        
+        play(buffer,offset,tone,sampleRate) {
+            if(Math.random() < 0.25) {
+                this.instrument.render(buffer,offset,this.tone,sampleRate,1.0,100);
+            }
+        }
+    }
 
     class Melody {
         constructor(instrument) {
@@ -132,6 +173,7 @@ Progress : <span id="abc"></span>
         let bl = blur.setOutput([frameCount]);
         var myArrayBuffer;
         var ms;
+        var ds;
         var playing = false;
         var computing = false;
     
@@ -164,12 +206,16 @@ Progress : <span id="abc"></span>
   	function make() {
   	    document.getElementById("abc").innerHTML = ms[0].i * 100 / frameCount + "%";
   	    
-        if(ms[0].i < frameCount) {
+        if(ds[0].i < frameCount) {
  
             for(let k = 0;k < 4;++k)
            ms.forEach((m,j) => {
                m.play(myArrayBuffer,m.i,audioCtx.sampleRate,shuffle([2,3,4]).pop());
      	       m.i += Math.round(0.125 * audioCtx.sampleRate * (j + 2));
+            });
+            ds.forEach((d) => {
+                d.play(myArrayBuffer,d.i,0,audioCtx.sampleRate);
+     	       d.i += Math.round(0.125 * audioCtx.sampleRate * 2);
             });
      	       window.setTimeout(make,10);
      	   } else {
@@ -192,7 +238,21 @@ Progress : <span id="abc"></span>
                     ms.push(new Melody(new Instrument(instruments0.shift(),add)));
 		        }
                 
-                let n = 1;//rand(2) + 1;
+                var drums0 = shuffle(instrumentsF(add2base));
+                
+                ds = [];
+                let takt = 4 + 4 * rand(2);
+                let xs = [0];
+                 ds.push(new Drum0(new Instrument(drums0.shift(),add),takt,0));
+               
+                for(let i = 0;i < 1;++i) {
+                    let m;
+                    do {
+                        m = rand(takt);
+                    } while(xs.includes(m));
+                    xs.push(m);
+                    ds.push(new Drum0(new Instrument(drums0.shift(),add),takt,m));
+                }
 
                 make();
             } else window.setTimeout(sound,10);
