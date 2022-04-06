@@ -157,11 +157,12 @@ class Instrument {
     }
 }
 
-	function instrumentsF(add2) {
+	function instrumentsF(add2,base) {
 		let xs = [];
 		
 		for(let i = 0;i < 10;++i) {
 			let r = new GeneralRandom();
+			r = Math;
 			
         	 let a = r.random();
        	  	 let b = r.random();
@@ -170,7 +171,7 @@ class Instrument {
 	         let e = r.random();
 	         let f = r.random();
 	         let g = r.random();
-			xs.push(add2(a,b,c,d,e,f,g));
+			xs.push(add2(a,b,c,d,e,f,g,base));
 		}
 		
 		let p = 1;// + 0.2 * Math.random();
