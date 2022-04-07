@@ -80,7 +80,7 @@ Progress : <span id="abc"></span>
     const add2 = gpu.createKernel(function (a,b,c,d,e,f,g,base) {
     	let x = 441.0 * Math.PI * this.thread.x / 44100.0 * Math.PI * Math.pow(2.0,(-24 + base) / 12.0);    		
 		return  (mypow(Math.sin(x),1.5 * a + 0.5) * (Math.cos(this.thread.x / (1500 + 15000 * b)) + 1)
-		    + mypow(Math.cos(x),1.5 * c + 0.5) * (Math.cos(this.thread.x / (1500 + 15000 * d)) + 1) )
+		    + mypow(Math.cos(x + g),1.5 * c + 0.5) * (Math.cos(this.thread.x / (1500 + 15000 * d)) + 1) )
 		    * (Math.atan(100 * f * (-this.thread.x - 10000 * (1 + 20 * e))) + Math.PI / 2);
     }).setOutput([200000]);
 
