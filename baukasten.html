@@ -5,9 +5,8 @@
 </head>
 
 <body>
-<table>
-<tr>
-<td id="abc">
+
+<div id="abc">
 
 <script>
 let boards = [];
@@ -489,143 +488,9 @@ eb.domDiv.style.height = "30%";
 eb.domDiv.style.float = "left";
 	
 </script>
-</td>
-</tr>
-<tr>
-<td>
-	<h1>ToDo</h1>
-<ol style="clear:both">
-	<li>
-		<table class="table">
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th scope="col">Handle</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td colspan=3>
-	      Game Filter CHain : 
-<div class="dropdown" style="float:left">
-  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-    Dropdown button
-  </button>
-  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-    <li><a class="dropdown-item" href="#">Schach</a></li>
-    <li><a class="dropdown-item" href="#">Mau Mau</a></li>
-    <li><a class="dropdown-item" href="#">Skat</a></li>
-    <li><a class="dropdown-item" href="#">Sudoku</a></li>
-    <li><a class="dropdown-item" href="#">RW Tarot</a></li>
-  </ul>
-</div>
-	      --->
-	      
-<div class="dropdown" style="float:left">>
-  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-    Dropdown button
-  </button>
-  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-    <li><a class="dropdown-item" href="#">Schach</a></li>
-    <li><a class="dropdown-item" href="#">Mau Mau</a></li>
-    <li><a class="dropdown-item" href="#">Skat</a></li>
-    <li><a class="dropdown-item" href="#">Sudoku</a></li>
-    <li><a class="dropdown-item" href="#">RW Tarot</a></li>
-  </ul>
-</div>
-	      --->
-	      
-<div class="dropdown" style="float:left">>
-  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-    Dropdown button
-  </button>
-  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-    <li><a class="dropdown-item" href="#">Schach</a></li>
-    <li><a class="dropdown-item" href="#">Mau Mau</a></li>
-    <li><a class="dropdown-item" href="#">Skat</a></li>
-    <li><a class="dropdown-item" href="#">Sudoku</a></li>
-    <li><a class="dropdown-item" href="#">RW Tarot</a></li>
-  </ul>
-</div>
-	      
-	    </td>
-    </tr>
-    <tr>
-      <th scope="row">4</th>
-      <td>
-	 
-  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-  <label class="form-check-label" for="flexRadioDefault1">
-    muss
-  </label>
-	    </td>
-	    <td>
-  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-  <label class="form-check-label" for="flexRadioDefault2">
-    darf
-  </label>
-	    
-	    
-	    
-	    </td>
-     <td>@Erklärung</td>
-    </tr>
-    <tr>
-      <th scope="row">5</th>
-      <td><div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-</div></td>
-      <td>Optionen</td>
-      <td>@Erklärung</td>
-    </tr>
-    <tr>
-      <th scope="row">5</th>
-	    <td colspan=3><button class="btn btn-primary">Spiel generieren...</button></td>
-    </tr>
-  </tbody>
-</table>
-
-
-	</li>
-	<li><h1>Kiefer Tarot Spiel Optionen Karten</h1> ("muss" / "darf" muss vor Spielbeginn festgelegt werden)
-		<ol>
-			<li>Z / Zusammenführung : SPieler A übernimmt einpassender weise den Spielstand von SPieler B</li>
-			<li>Verzwiegung : Spielstand von SpielerA wir augeteilt, Spieler A hat dann 2 Spielstände</li>
-			<li>1 / Zahl : es wird nur eine neueKarte vom Stapel gezogen</li>
-			<li>D / Zugehörigkeit : Spieler A klaut ein Spielelement von Spieler B in einpassender weise</li>
-			<li>O / Umlauf : Spieler A tauscht SPielstand mit SPieler B aus</li>
-			<li>-> / Echo : die Zufallselemente werden in Sequenz angearbeitet>/li>
-			<li>Widerstand : Spieler A darf, wenn er mehrere Spielstände besitzt, einen davon aus dem Spiel nehmen</li>
-			<li>? / Horizont : Spieler A darf seine Spielstände seitenverkehr herum drehen</li>
-			<li>S / Stop : Spieler A sucht muss / darf aussuchen, wer einmal aussetzen muss / darf</li>
-			<li>T / Sympathie :  Spieler A(n der Reihe) darf seinen Zug aufschieben und macht beim nächsten Zug 2 Züge</li>
-			<li>=> / Filter : Spieler A darf ein Spielelement rückbauen, d.h. aus dem Spiel nehmen</li>
-			<li>. / Punkt : das SIngulär Ereignis : Spieler A darf 2 Spielzüge machen , der Punkt DARF nur einmal verwendet werden und muss danach aus dem Spiel genommen werden</li>
-			<li>U / Umbau : Spieler A(n der Reihe) darf / muss seine Spielstände passender weise restrukturieren / umstrukturieren</li>
-		</ol>
-	</li>
-	<li><h1>Skat Alphabet</h1> Karo = 0 ; Herz = +1 ; Pik = +10 ; Kreuz = +11 ; 2..10 = 2..10 ; Ass = 1 ; Bube = 11 ; Dame = 12 ; König = 13 </li>
-	<li><h1>Würfel Skat Sudoku</h1> : <img src="games/SkatSudoku.png" style="width:10%"> Die Würfel werden zwischen den Karten platziert und einzelne Kartenwerte dürfen negiert werden und die Summe muss den Würfelwert ergeben </li>
-	<li><h1>Mau Mau Aufbau Mahjong</h1> : <img src="games/MauMauAufbauMahjong.png" style="width:10%"> Es werden 4 zufällige Karten zentral abgelegt. Horizontal und vertikal nach den Mau Mau Regeln anlegen </li>
-	<li><h1>Der Skat Schach Computer</h1> Kreuz : äußerster Ring; Pik : zweiter Ring; Herz : dritter Ring ; Karo : Zentrum; Ass, 2, 3, 4 ... : Reihe 1,2,3,4 ; 9==8 und 10==7 und 9==1 und 10==2 ; Zug : von Ring nach Reihe oder von Reihe nach Ring; notfalls nächste Karte</li>
-	<li><h1>Mau Mau Commandos</h1>
-		<ol>
-			<li>Aufbau : <img src="games/CommandosAufbau.png" style="width:10%"></li>
-			<li><img src="games/CommandosSkatFeld.png" style="width:10%"> Das Skat Feld wird aufgedeckt</li>
-			<li><img src="games/CommandosErsterGegnerTot.png" style="width:10%"> eine vollständige Pipeline zu einem Gegner tötet den Gegner</li>
-			<li><img src="games/Commandos3GegnerTot.png" style="width:10%"> eine vollständige Pipeline zu einem Gegner tötet den Gegner</li>
-		</ol>
-	</li>
-	<li><img src="games/MauMauSchach.png" style="width:10%"> Es darf sich nur nach den MauMau Regeln bewegt werden. Karte gegen Figur tauschen oder FIgur schlagen </li>
-	<li><h1>Mau Mau Schach</h1> Pipeline zur Zielfiguer / Würfel : Start->Ziel aufsteigend , max. einmal rotieren / Schach FIguren : Start->Ziel nach Wertigkeit aufsteigend, max einmal rotieren</li>
-</ol>
-</td>
-</tr>
-</table>
-<script src="bootstrap.bundle.min.js"></script>
+	</div>
+	
+	<script src="bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
