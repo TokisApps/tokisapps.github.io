@@ -189,8 +189,6 @@ Progress : <span id="abc"></span>
                 // This is the AudioNode to use when we want to play an AudioBuffer
                 for(let i = 0;i < channels;++i) myArrayBuffer.copyToChannel(bl(myArrayBuffer.getChannelData(i)),i);
                 
-                var ad = document.createElement("audio");
-                
                 var source = audioCtx.createBufferSource();
                 source.onended = () => {playing = false};
                 // set the buffer in the AudioBufferSourceNode
@@ -252,13 +250,11 @@ Progress : <span id="abc"></span>
         window.setTimeout(() => {
             if(!computing) {
                 computing = true;
-                
-                
-                
-                seconds = parseInt(document.getElementById("seconds").value);
-                frameCount = audioCtx.sampleRate * seconds;
-                
+                                
                 makeScale();
+
+                seconds = parseInt(document.getElementById("sec").value);
+                frameCount = audioCtx.sampleRate * seconds;
                 myArrayBuffer = audioCtx.createBuffer(channels, frameCount, audioCtx.sampleRate);
                 var instruments0 = shuffle(instrumentsF(add2,0));   
                 
@@ -293,7 +289,7 @@ Progress : <span id="abc"></span>
 
 <br>
 Seconds : 
-<select id="seconds">
+<select id="sec">
     <option value="30">30</option>
     <option value="60">60</option>
     <option value="120">120</option>
