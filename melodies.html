@@ -174,7 +174,7 @@ Progress : <span id="abc"></span>
     }
    
         var channels = 2;
-        var seconds = 180;
+        var seconds = 30;
         var frameCount = audioCtx.sampleRate * seconds;
         let bl = blur.setOutput([frameCount]);
         var myArrayBuffer;
@@ -201,7 +201,12 @@ Progress : <span id="abc"></span>
                 
                 source.connect(audioCtx.destination);
                 source.start();
-              
+                document.getElementById("cbase").innerHTML = document.getElementById("base").innerHTML;
+                document.getElementById("cbasesteps").innerHTML = document.getElementById("basesteps").innerHTML;
+                document.getElementById("csteps").innerHTML = document.getElementById("steps").innerHTML;
+                document.getElementById("cnewbasescale").innerHTML = document.getElementById("newbasescale").innerHTML;
+                document.getElementById("cscale").innerHTML = document.getElementById("scale").innerHTML;
+
                 playing = true;
                 
                 sound();
@@ -291,6 +296,20 @@ steps : <span id="steps"></span>
 new base scale : <span id="newbasescale"></span>
 <br>
 scale : <span id="scale"></span>
+</fieldset>
+
+
+<fieldset>
+<legend>Current Scale Data</legend>
+base : <span id="cbase"></span>
+<br>
+base steps : <span id="cbasesteps"></span>
+<br>
+steps : <span id="csteps"></span>
+<br>
+new base scale : <span id="cnewbasescale"></span>
+<br>
+scale : <span id="cscale"></span>
 </fieldset>
 
 </body>
