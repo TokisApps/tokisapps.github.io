@@ -21,16 +21,17 @@ Progress : <span id="abc"></span>
     function makeScale() {
 	    let sc = [0,2,4,5,7,9,11];
 	    sc = [0,2,3,6,7,8,11];
+	    let attr = "";
 	    
 	    switch(rand(4)) {
 	    //switch(0) {
-	    	case 0: sc = [0,2,4,5,7,9,11];break; // Dur
-	    	case 1: sc = [0,2,3,6,7,8,11];break;
-	    	case 2: sc = [0,1,4,5,7,8,11];break;
-	    	case 3: sc = [0,2,3,5,7,8,11];break;
+	    	case 0: sc = [0,2,4,5,7,9,11];attr = "Dur";break; // Dur
+	    	case 1: sc = [0,2,3,5,7,8,10];attr = "Moll";break;
+	    	case 2: sc = [0,2,3,5,7,9,10];attr = "Harmonisches Moll";break;
+	    	case 3: sc = [0,2,3,6,7,9,10];attr = "Zigeuner Moll";break;
 	    }
 
-	    document.getElementById("base").innerHTML = "[" + sc + "]";
+	    document.getElementById("base").innerHTML = "[" + sc + "] (" + attr + ")";
 	    
 	    let sc0 = [];
 		let r = Math;
