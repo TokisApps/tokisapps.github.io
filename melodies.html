@@ -38,7 +38,7 @@ Progress : <span id="abc"></span>
 	
 	    
 	    for(let i = 0;i < sc.length - 1;++i) sc0.push(sc[i + 1] - sc[i]);
-	    //sc0.push(12 + sc[0] - sc[sc.length - 1]);
+	    sc0.push(12 + sc[0] - sc[sc.length - 1]);
 	    let m = Math.trunc(r.random() * sc0.length);
 	    console.log(sc0);
 	    console.log(m);
@@ -52,7 +52,7 @@ Progress : <span id="abc"></span>
 	    }
 	    
 	    sc = [0];
-	    for(let j = 0;j < sc0.length;++j) sc.push(sc0[j] + sc[j]);
+	    for(let j = 0;j < sc0.length - 1;++j) sc.push(sc0[j] + sc[j]);
 	    
 	    document.getElementById("newbasescale").innerHTML = "[" + sc + "]";
 	    
