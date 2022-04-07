@@ -23,21 +23,26 @@ Progress : <span id="abc"></span>
 	    sc = [0,2,3,6,7,8,11];
 	    
 	    switch(rand(4)) {
-	    	case 0: sc = [0,2,4,5,7,9,11];break;
+	    //switch(0) {
+	    	case 0: sc = [0,2,4,5,7,9,11];break; // Dur
 	    	case 1: sc = [0,2,3,6,7,8,11];break;
 	    	case 2: sc = [0,1,4,5,7,8,11];break;
 	    	case 3: sc = [0,2,3,5,7,8,11];break;
 	    }
+
+	    document.getElementById("base").innerHTML = "[" + sc + "]";
 	    
 	    let sc0 = [];
 		let r = Math;
 	
 	    
 	    for(let i = 0;i < sc.length - 1;++i) sc0.push(sc[i + 1] - sc[i]);
-	    sc0.push(12 + sc[0] - sc[sc.length - 1]);
+	    //sc0.push(12 + sc[0] - sc[sc.length - 1]);
 	    let m = Math.trunc(r.random() * sc0.length);
 	    console.log(sc0);
 	    console.log(m);
+
+	    document.getElementById("basesteps").innerHTML = "[" + sc0 + "]";
 	    
 	    for(let i = 0;i < m;++i) {
 		    let swp = sc0[0];
@@ -46,10 +51,9 @@ Progress : <span id="abc"></span>
 	    }
 	    
 	    sc = [0];
-	    for(let j = 0;j < sc0.length - 1;++j) sc.push(sc0[j] + sc[j]);
+	    for(let j = 0;j < sc0.length;++j) sc.push(sc0[j] + sc[j]);
 	    
-	    console.log(sc0);
-	    console.log(sc);
+	    document.getElementById("newbasescale").innerHTML = "[" + sc + "]";
 	    
 	    let n = rand(6);
 	    
@@ -61,7 +65,8 @@ Progress : <span id="abc"></span>
 		    k += 1;
 	    }
 	    
-	    console.log(scale);
+	    document.getElementById("steps").innerHTML = "[" + sc0 + "]";
+	    document.getElementById("scale").innerHTML = "[" + scale + "]";
     }
 
 
@@ -274,6 +279,18 @@ Progress : <span id="abc"></span>
     sound();
 </script>
 
+<fieldset>
+<legend>Scale Data</legend>
+base : <span id="base"></span>
+<br>
+base steps : <span id="basesteps"></span>
+<br>
+steps : <span id="steps"></span>
+<br>
+new base scale : <span id="newbasescale"></span>
+<br>
+scale : <span id="scale"></span>
+</fieldset>
 
 </body>
 </html>
