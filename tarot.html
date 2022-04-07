@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+   <title>Computer aided FBI / CAF</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<script>
+function xmur3(str) {
+    for(var i = 0, h = 1779033703 ^ str.length; i < str.length; i++)
+        h = Math.imul(h ^ str.charCodeAt(i), 3432918353),
+        h = h << 13 | h >>> 19;
+    return function() {
+        h = Math.imul(h ^ h >>> 16, 2246822507);
+        h = Math.imul(h ^ h >>> 13, 3266489909);
+        return (h ^= h >>> 16) >>> 0;
+    }
+}
+
+function mulberry32(a) {
+    return function() {
+      var t = a += 0x6D2B79F5;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+}
+
+
+
+
+function Random(str) {
+	var seed = xmur3(str);
+	this.rnd = mulberry32(seed());
+	Math.random = this.rnd.bind(this);
+}
+	
+
+Array.prototype.rel = function() {
+    return this[Math.trunc(Math.random() * this.length)];
+}
+
+
+console.log([1,2,3,4,5].rel());
+console.log([1,2,3,4,5].rel());
+console.log([1,2,3,4,5].rel());
+console.log([1,2,3,4,5].rel());
+console.log([1,2,3,4,5].rel());
+
+class Tarot {
+    constructor(str) {
+	    this.rand = new Random(str);
+    }
+
+    noun(p) {
+	    let xs = [
+		    "area",
+		    "book",
+		    "business",
+		    "case",
+		    "child",
+		    "company",
+		    "country",
+		    "day",
+		    "eye",
+		    "fact",
+		    "family",
+		    "government",
+		    "group",
+		    "hand",
+		    "home",
+		    "job",
+		    "life",
+		    "lot",
+		    "man",
+		    "money",
+		    "month",
+		    "mother",
+		    "Mr",
+		    "night",
+		    "number",
+		    "part",
+		    "people",
+		    "place",
+		    "point",
+		    "problem",
+		    "program",
+		    "question",
+		    "right",
+		    "room",
+		    "school",
+		    "state",
+		    "story",
+		    "student",
+		    "study",
+		    "system",
+		    "thing",
+		    "time",
+		    "water",
+		    "way",
+		    "week",
+		    "woman",
+		    "word",
+		    "work",
+		    "world",
+		    "year",
+            "Actor",
+            "Gold",
+            "Painting",
+            "Advertisement",
+            "Grass",
+            "Parrot",
+            "Afternoon",
+            "Greece",
+            "Pencil",
+            "Airport",
+            "Guitar",
+            "Piano",
+            "Ambulance",
+            "Hair",
+            "Pillow",
+            "Animal",
+            "Hamburger",
+            "Pizza",
+            "Answer",
+            "Helicopter",
+            "Planet",
+            "Apple",
+            "Helmet",
+            "Plastic",
+            "Army",
+            "Holiday",
+            "Portugal",
+            "Australia",
+            "Honey",
+            "Potato",
+            "Balloon",
+            "Horse",
+            "Queen",
+            "Banana",
+            "Hospital",
+            "Quill",
+            "Battery",
+            "House",
+            "Rain",
+            "Beach",
+            "Hydrogen",
+            "Rainbow",
+            "Beard",
+            "Ice",
+            "Raincoat",
+            "Bed",
+            "Insect",
+            "Refrigerator",
+            "Belgium",
+            "Insurance",
+            "Restaurant",
+            "Boy",
+            "Iron",
+            "River",
+            "Branch",
+            "Island",
+            "Rocket",
+            "Breakfast",
+            "Jackal",
+            "Room",
+            "Brother",
+            "Jelly",
+            "Rose",
+            "Camera",
+            "Jewellery",
+            "Russia",
+            "Candle",
+            "Jordan",
+            "Sandwich",
+            "Car",
+            "Juice",
+            "School",
+            "Caravan",
+            "Kangaroo",
+            "Scooter",
+            "Carpet",
+            "King",
+            "Shampoo",
+            "Cartoon",
+            "Kitchen",
+            "Shoe",
+            "China",
+            "Kite",
+            "Soccer",
+            "Church",
+            "Knife",
+            "Spoon",
+            "Crayon",
+            "Lamp",
+            "Stone",
+            "Crowd",
+            "Lawyer",
+            "Sugar",
+            "Daughter",
+            "Leather",
+            "Sweden",
+            "Death",
+            "Library",
+            "Teacher",
+            "Denmark",
+            "Lighter",
+            "Telephone",
+            "Diamond",
+            "Lion",
+            "Television",
+            "Dinner",
+            "Lizard",
+            "Tent",
+            "Disease",
+            "Lock",
+            "Thailand",
+            "Doctor",
+            "London",
+            "Tomato",
+            "Dog",
+            "Lunch",
+            "Toothbrush",
+            "Dream",
+            "Machine",
+            "Traffic",
+            "Dress",
+            "Magazine",
+            "Train",
+            "Easter",
+            "Magician",
+            "Truck",
+            "Egg",
+            "Manchester",
+            "Uganda",
+            "Eggplant",
+            "Market",
+            "Umbrella",
+            "Egypt",
+            "Match",
+            "Van",
+            "Elephant",
+            "Microphone",
+            "Vase",
+            "Energy",
+            "Monkey",
+            "Vegetable",
+            "Engine",
+            "Morning",
+            "Vulture",
+            "England",
+            "Motorcycle",
+            "Wall",
+            "Evening",
+            "Nail",
+            "Whale",
+            "Eye",
+            "Napkin",
+            "Window",
+            "Family",
+            "Needle",
+            "Wire",
+            "Finland",
+            "Nest",
+            "Xylophone",
+            "Fish",
+            "Nigeria",
+            "Yacht",
+            "Flag",
+            "Night",
+            "Yak",
+            "Flower",
+            "Notebook",
+            "Zebra",
+            "Football",
+            "Ocean",
+            "Zoo",
+            "Forest",
+            "Oil",
+            "Garden",
+            "Fountain",
+            "Orange",
+            "Gas",
+            "France",
+            "Oxygen",
+            "Girl",
+            "Furniture",
+            "Oyster",
+            "Glass",
+            "Garage",
+            "Ghost"
+	    ];
+	    
+	    let s = xs.rel();
+	    s = s.charAt(0).toLowerCase() + s.slice(1);
+	    
+	    if(p)
+	        return s + "s";
+	    else
+	    	return s;
+    }
+    
+    verb(t,p) {
+        let xs = [
+            ["begin", "began", "begun", "beginnen",],
+            ["become", "became", "become","werden",],
+            ["break", "broke", "broken", "zerbrechen",],
+            ["bring", "brought", "brought", "bringen",],
+            ["buy", "bought", "bought", "kaufen",],
+            ["build", "built", "built", "bauen",],
+            ["choose", "chose", "chosen", "wählen",],
+            ["come", "came", "come", "kommen",],
+            ["cost", "cost", "cost", "kosten",],
+            ["cut", "cut", "cut", "schneiden",],
+            ["do", "did", "done", "tun",],
+            ["draw", "drew", "drawn", "ziehen/zeichnen",],
+            ["drive", "drove", "driven", "fahren",],
+            ["eat", "ate", "eaten", "essen",],
+            ["feel", "felt", "felt", "fühlen",],
+            ["find", "found", "found", "finden",],
+            ["get", "got", "got", "bekommen",],
+            ["give", "gave", "given", "geben",],
+            ["go", "went", "gone", "gehen",],
+            ["have", "had", "had", "haben",],
+            ["hear", "heard", "heard", "hören",],
+            ["hold", "held", "held", "halten",],
+            ["keep", "kept", "kept", "behalten",],
+            ["know", "knew", "known", "wissen",],
+            ["leave", "left", "left", "verlassen",],
+            ["lead", "led", "led", "führen",],
+            ["let", "let", "let", "lassen",],
+            ["lie", "lay", "lain", "lügen",],
+            ["lose", "lost", "lost", "verlieren",],
+            ["make", "made", "made", "machen",],
+            ["mean", "meant", "meant", "bedeuten",],
+            ["meet", "met", "met", "treffen",],
+            ["pay", "paid", "paid", "bezahlen",],
+            ["put", "put", "put", "setzen",],
+            ["run", "ran", "run", "laufen",],
+            ["say", "said", "said", "sagen",],
+            ["see", "saw", "seen", "sehen",],
+            ["sell", "sold", "sold", "verkaufen",],
+            ["send", "sent", "sent", "senden",],
+            ["set", "set", "set", "festlegen",],
+            ["sit", "sat", "sat", "sitzen",],
+            ["speak", "spoke", "spoken", "sprechen",],
+            ["spend", "spent", "spent", "ausgeben",],
+            ["stand", "stood", "stood", "stehen",],
+            ["take", "took", "taken", "nehmen",],
+            ["teach", "taught", "taught", "lehren",],
+            ["tell", "told", "told", "erzählen",],
+            ["think", "thought", "thought", "denken",],
+            ["understand", "understood", "understood", "verstehen",],
+            ["wear", "wore", "worn", "tragen",],
+            ["win", "won", "won", "gewinnen",],
+            ["write", "wrote", "written", "schreiben",],
+            ["can","could","could","können",],
+         ];
+         let ys = [
+            "accept",
+            "add",
+            "admire",
+            "admit",
+            "advise",
+            "afford",
+            "agree",
+            "alert",
+            "allow",
+            "amuse",
+            "analyze",
+            "announce",
+            "annoy",
+            "answer",
+            "apologise",
+            "appear",
+            "applaud",
+            "appreciate",
+            "approve",
+            "argue",
+            "arrange",
+            "arrest",
+            "arrive",
+            "ask",
+            "attach",
+            "attack",
+            "attempt",
+            "attend",
+            "attract",
+            "avoid",
+            "back",
+            "bake",
+            "balance",
+            "ban",
+            "bang",
+            "bare",
+            "bat",
+            "bathe",
+            "battle",
+            "beam",
+            "beg",
+            "behave",
+            "belong",
+            "bleach",
+            "bless",
+            "blind",
+            "blink",
+            "blot",
+            "blush",
+            "boast",
+            "boil",
+            "bolt",
+            "bomb",
+            "book",
+            "bore",
+            "borrow",
+            "bounce",
+            "bow",
+            "box",
+            "brake",
+            "branch",
+            "breathe",
+            "bruise",
+            "brush",
+            "bubble",
+            "bump",
+            "burn",
+            "bury",
+            "buzz",
+            "calculate",
+            "call",
+            "camp",
+            "care",
+            "carry",
+            "carve",
+            "cause",
+            "challenge",
+            "change",
+            "charge",
+            "chase",
+            "cheat",
+            "check",
+            "cheer",
+            "chew",
+            "choke",
+            "chop",
+            "claim",
+            "clap",
+            "clean",
+            "clear",
+            "clip",
+            "close",
+            "coach",
+            "coil",
+            "collect",
+            "colour",
+            "comb",
+            "command",
+            "communicate",
+            "compare",
+            "compete",
+            "complain",
+            "complete",
+            "concentrate",
+            "concern",
+            "confess",
+            "confuse",
+            "connect",
+            "consider",
+            "consist",
+            "contain",
+            "continue",
+            "copy",
+            "correct",
+            "cough",
+            "count",
+            "cover",
+            "crack",
+            "crash",
+            "crawl",
+            "cross",
+            "crush",
+            "cry",
+            "cure",
+            "curl",
+            "curve",
+            "cycle",
+            "dam",
+            "damage",
+            "dance",
+            "dare",
+            "decay",
+            "deceive",
+            "decide",
+            "decorate",
+            "delay",
+            "delight",
+            "deliver",
+            "depend",
+            "describe",
+            "desert",
+            "deserve",
+            "destroy",
+            "detect",
+            "develop",
+            "disagree",
+            "disappear",
+            "disapprove",
+            "disarm",
+            "discover",
+            "dislike",
+            "divide",
+            "double",
+            "doubt",
+            "drag",
+            "drain",
+            "dream",
+            "dress",
+            "drip",
+            "drop",
+            "drown",
+            "drum",
+            "dry",
+            "dust",
+            "earn",
+            "educate",
+            "embarrass",
+            "employ",
+            "empty",
+            "encourage",
+            "end",
+            "enjoy",
+            "enter",
+            "entertain",
+            "escape",
+            "examine",
+            "excite",
+            "excuse",
+            "exercise",
+            "exist",
+            "expand",
+            "expect",
+            "explain",
+            "explode",
+            "extend",
+            "face",
+            "fade",
+            "fail",
+            "fancy",
+            "fasten",
+            "fax",
+            "fear",
+            "fence",
+            "fetch",
+            "file",
+            "fill",
+            "film",
+            "fire",
+            "fit",
+            "fix",
+            "flap",
+            "flash",
+            "float",
+            "flood",
+            "flow",
+            "flower",
+            "fold",
+            "follow",
+            "fool",
+            "force",
+            "form",
+            "found",
+            "frame",
+            "frighten",
+            "fry",
+            "gather",
+            "gaze",
+            "glow",
+            "glue",
+            "grab",
+            "grate",
+            "grease",
+            "greet",
+            "grin",
+            "grip",
+            "groan",
+            "guarantee",
+            "guard",
+            "guess",
+            "guide",
+            "hammer",
+            "hand",
+            "handle",
+            "hang",
+            "happen",
+            "harass",
+            "harm",
+            "hate",
+            "haunt",
+            "head",
+            "heal",
+            "heap",
+            "heat",
+            "help",
+            "hook",
+            "hop",
+            "hope",
+            "hover",
+            "hug",
+            "hum",
+            "hunt",
+            "hurry",
+            "identify",
+            "ignore",
+            "imagine",
+            "impress",
+            "improve",
+            "include",
+            "increase",
+            "influence",
+            "inform",
+            "inject",
+            "injure",
+            "instruct",
+            "intend",
+            "interest",
+            "interfere",
+            "interrupt",
+            "introduce",
+            "invent",
+            "invite",
+            "irritate",
+            "itch",
+            "jail",
+            "jam",
+            "jog",
+            "join",
+            "joke",
+            "judge",
+            "juggle",
+            "jump",
+            "kick",
+            "kill",
+            "kiss",
+            "kneel",
+            "knit",
+            "knock",
+            "knot",
+            "label",
+            "land",
+            "last",
+            "laugh",
+            "launch",
+            "learn",
+            "level",
+            "license",
+            "lick",
+            "lie",
+            "lighten",
+            "like",
+            "list",
+            "listen",
+            "live",
+            "load",
+            "lock",
+            "long",
+            "look",
+            "love",
+            "man",
+            "manage",
+            "march",
+            "mark",
+            "marry",
+            "match",
+            "mate",
+            "matter",
+            "measure",
+            "meddle",
+            "melt",
+            "memorise",
+            "mend",
+            "mess-up",
+            "milk",
+            "mine",
+            "miss",
+            "mix",
+            "moan",
+            "moor",
+            "mourn",
+            "move",
+            "muddle",
+            "mug",
+            "multiply",
+            "murder",
+            "nail",
+            "name",
+            "need",
+            "nest",
+            "nod",
+            "note",
+            "notice",
+            "number",
+            "obey",
+            "object",
+            "observe",
+            "obtain",
+            "occur",
+            "offend",
+            "offer",
+            "open",
+            "order",
+            "overflow",
+            "owe",
+            "own",
+            "pack",
+            "paddle",
+            "paint",
+            "park",
+            "part",
+            "pass",
+            "paste",
+            "pat",
+            "pause",
+            "peck",
+            "pedal",
+            "peel",
+            "peep",
+            "perform",
+            "permit",
+            "phone",
+            "pick",
+            "pinch",
+            "pine",
+            "place",
+            "plan",
+            "plant",
+            "play",
+            "please",
+            "plug",
+            "point",
+            "poke",
+            "polish",
+            "pop",
+            "possess",
+            "post",
+            "pour",
+            "practice",
+            "pray",
+            "preach",
+            "precede",
+            "prefer",
+            "prepare",
+            "present",
+            "preserve",
+            "press",
+            "pretend",
+            "prevent",
+            "prick",
+            "print",
+            "produce",
+            "program",
+            "promise",
+            "protect",
+            "provide",
+            "pull",
+            "pump",
+            "punch",
+            "puncture",
+            "punish",
+            "push",
+            "question",
+            "queue",
+            "race",
+            "radiate",
+            "rain",
+            "raise",
+            "reach",
+            "realise",
+            "receive",
+            "recognise",
+            "record",
+            "reduce",
+            "reflect",
+            "refuse",
+            "regret",
+            "reign",
+            "reject",
+            "rejoice",
+            "relax",
+            "release",
+            "rely",
+            "remain",
+            "remember",
+            "remind",
+            "remove",
+            "repair",
+            "repeat",
+            "replace",
+            "reply",
+            "report",
+            "reproduce",
+            "request",
+            "rescue",
+            "retire",
+            "return",
+            "rhyme",
+            "rinse",
+            "risk",
+            "rob",
+            "rock",
+            "roll",
+            "rot",
+            "rub",
+            "ruin",
+            "rule",
+            "rush",
+            "sack",
+            "sail",
+            "satisfy",
+            "save",
+            "saw",
+            "scare",
+            "scatter",
+            "scold",
+            "scorch",
+            "scrape",
+            "scratch",
+            "scream",
+            "screw",
+            "scribble",
+            "scrub",
+            "seal",
+            "search",
+            "separate",
+            "serve",
+            "settle",
+            "shade",
+            "share",
+            "shave",
+            "shelter",
+            "shiver",
+            "shock",
+            "shop",
+            "shrug",
+            "sigh",
+            "sign",
+            "signal",
+            "sin",
+            "sip",
+            "ski",
+            "skip",
+            "slap",
+            "slip",
+            "slow",
+            "smash",
+            "smell",
+            "smile",
+            "smoke",
+            "snatch",
+            "sneeze",
+            "sniff",
+            "snore",
+            "snow",
+            "soak",
+            "soothe",
+            "sound",
+            "spare",
+            "spark",
+            "sparkle",
+            "spell",
+            "spill",
+            "spoil",
+            "spot",
+            "spray",
+            "sprout",
+            "squash",
+            "squeak",
+            "squeal",
+            "squeeze",
+            "stain",
+            "stamp",
+            "stare",
+            "start",
+            "stay",
+            "steer",
+            "step",
+            "stir",
+            "stitch",
+            "stop",
+            "store",
+            "strap",
+            "strengthen",
+            "stretch",
+            "strip",
+            "stroke",
+            "stuff",
+            "subtract",
+            "succeed",
+            "suck",
+            "suffer",
+            "suggest",
+            "suit",
+            "supply",
+            "support",
+            "suppose",
+            "surprise",
+            "surround",
+            "suspect",
+            "suspend",
+            "switch",
+            "talk",
+            "tame",
+            "tap",
+            "taste",
+            "tease",
+            "telephone",
+            "tempt",
+            "terrify",
+            "test",
+            "thank",
+            "thaw",
+            "tick",
+            "tickle",
+            "tie",
+            "time",
+            "tip",
+            "tire",
+            "touch",
+            "tour",
+            "tow",
+            "trace",
+            "trade",
+            "train",
+            "transport",
+            "trap",
+            "travel",
+            "treat",
+            "tremble",
+            "trick",
+            "trip",
+            "trot",
+            "trouble",
+            "trust",
+            "try",
+            "tug",
+            "tumble",
+            "turn",
+            "twist",
+            "type",
+            "undress",
+            "unfasten",
+            "unite",
+            "unlock",
+            "unpack",
+            "untidy",
+            "use",
+            "vanish",
+            "visit",
+            "wail",
+            "wait",
+            "walk",
+            "wander",
+            "want",
+            "warm",
+            "warn",
+            "wash",
+            "waste",
+            "watch",
+            "water",
+            "wave",
+            "weigh",
+            "welcome",
+            "whine",
+            "whip",
+            "whirl",
+            "whisper",
+            "whistle",
+            "wink",
+            "wipe",
+            "wish",
+            "wobble",
+            "wonder",
+            "work",
+            "worry",
+            "wrap",
+            "wreck",
+            "wrestle",
+            "wriggle",
+            "x-ray",
+            "yawn",
+            "yell",
+            "zip",
+            "zoom"
+        ];
+        
+        if(Math.random() < 0.5) {
+        	let s = xs.rel();
+        	
+        	switch(t) {
+        		case 0:
+        			if(p)
+        				return s[0];
+        			else
+        				return s[0] + "s";
+    			case 1:
+        			return s[1];
+				case 2:
+         			if(p)
+        				return "have " + s[2];
+        			else
+        				return "has " + s[2];
+				case 3:
+         			if(p)
+        				return "are " + s[0] + "ing";
+        			else
+        				return "is " + s[0] + "ing";
+				case 4:
+        			return "will " + s[0];
+				case 5:
+         			if(p)
+        				return "are going to " + s[0];
+        			else
+        				return "is going to " + s[0];
+				case 6:
+        			return "will be " + s[0] + "ing";
+				case 7:
+        			return "will have " + s[2];
+        	}
+        } else {
+        	let s = ys.rel();
+
+        	switch(t) {
+        		case 0:
+        			if(p)
+        				return s;
+        			else
+        				return s + "s";
+    			case 1:
+        			return s + "ed";
+				case 2:
+         			if(p)
+        				return "have " + s + "ed";
+        			else
+        				return "has " + s + "ed";
+				case 3:
+         			if(p)
+        				return "are " + s + "ing";
+        			else
+        				return "is " + s + "ing";
+				case 4:
+        			return "will " + s;
+				case 5:
+         			if(p)
+        				return "are going to " + s;
+        			else
+        				return "is going to " + s;
+				case 6:
+        			return "will be " + s + "ing";
+				case 7:
+        			return "will have " + s + "ed";
+        	}
+        }
+    }
+  
+    adjective() {
+        let xs= [
+            "able",
+            "bad",
+            "best",
+            "better",
+            "big",
+            "black",
+            "certain",
+            "clear",
+            "different",
+            "early",
+            "easy",
+            "economic",
+            "federal",
+            "free",
+            "full",
+            "good",
+            "great",
+            "hard",
+            "high",
+            "human",
+            "important",
+            "international",
+            "large",
+            "late",
+            "little",
+            "local",
+            "long",
+            "low",
+            "major",
+            "military",
+            "national",
+            "new",
+            "old",
+            "only",
+            "other",
+            "political",
+            "possible",
+            "public",
+            "real",
+            "recent",
+            "right",
+            "small",
+            "social",
+            "special",
+            "strong",
+            "sure",
+            "true",
+            "white",
+            "whole",
+            "young"
+        ];
+
+		return ["","un"].rel() + xs.rel();
+    }
+     
+    noun2(p) {
+    	switch(Math.trunc(Math.random() * 2)) {
+    		case 0:
+    			return this.noun(p);
+    		case 1:
+    			if(p == 0)
+	    			return this.verb(0,1) + "ment";
+	    		else
+	    			return this.verb(0,1) + "ments";
+    	}
+    }
+       
+    adjective2() {
+    	switch(Math.trunc(Math.random() * 2)) {
+    		case 0:
+    			return this.adjective();
+    		case 1:
+    			return this.verb(0,1) + "ing";
+    	}
+    }
+
+    attrNoun(p) {
+    	let x = "";
+    	if(p) {
+	    	x = ["","the"].rel();
+    	} else {
+	    	x = ["a","the"].rel();
+    	}
+    	
+    	let y = "";
+    	if(Math.random() < 0.5) y = this.adjective2();
+    	
+    	return x + " " + y + " " + this.noun2(p);
+    }
+    
+    attrNoun2(p) {
+    	let x = "";
+    	if(p) {
+	    	x = ["","the"].rel();
+    	} else {
+	    	x = ["a","the"].rel();
+    	}
+    	
+    	let y = "";
+    	if(Math.random() < 0.5) y = this.adjective2();
+    	
+    	return y + " " + x + " " + this.noun2(p);
+    }
+
+    time() {
+	   	switch(Math.trunc(Math.random() * 4)) {
+    		case 0:
+    			return ["tomorrow","today","yesterday","in the evening","in the morning","at night"].rel() + " , ";
+    		case 1:
+    			return ["after","before","on"].rel() + " " + this.attrNoun(Math.random() < 0.5) + " , " + this.time();
+    		case 2:
+    			return ["after","before","on"].rel() + " " + this.attrNoun2(Math.random() < 0.5) + " , " + this.time();
+    		case 3:
+    			return "";
+    	}
+    }
+    
+    get() {
+    	let p = Math.random() < 0.5;
+    	
+    	return this.time() + " " + this.attrNoun(p)+ " " + this.verb(Math.trunc(8 * Math.random()),p)+ " " + this.attrNoun(Math.random() < 0.5); 
+    }
+}
+</script>
+
+<script src="gpu-browser.min.js"></script>
+
+</head>
+<body style="width:100%">
+  
+  
+  <div id="google_translate_element"></div>
+<script type="text/javascript">// <![CDATA[
+function googleTranslateElementInit() {
+new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+}
+// ]]></script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" type="text/javascript"></script>
+<table style="width:100%">
+	<tr>
+		<td style="width:80%">
+			<fieldset style="width:90%;height:500px;background-color:lightgray" id="cd">
+				<legend style="font-size:x-large;background-color:yellow">Chat</legend>
+				<div style="width:100%;height:90%;overflow:auto;font-size:x-large" id="xy"></div>
+			</fieldset>
+			<input type="text" style="width:80%" id="ef" placeholder="Interpretation"><br>
+			<input type="text" style="width:80%" id="ab" placeholder="Frage"><br>
+		</td>
+		<td id="abcd">
+			<canvas style="width:100%"  id="cv" width=128 height=128></canvas>
+		</td>
+	</tr>
+</table>
+
+    <!-- Start of WebFreeCounter Code -->
+<a href="https://www.webfreecounter.com/" target="_blank"><img src="https://www.webfreecounter.com/hit.php?id=gmmvpxpdn&nd=6&style=47" border="0" alt="free counter"></a>
+<!-- End of WebFreeCounter Code -->
+<script>
+    document.getElementById("xy").innerHTML = new Date() + "<br>";
+	new Tarot(document.getElementById("xy").innerHTML);    
+ 
+    let cv = document.getElementById("cv");
+    let ctx = cv.getContext("2d");
+    console.log(cv);
+    console.log(ctx);
+    let idata = ctx.getImageData(0,0,cv.width,cv.height);
+    let idata2;
+    let m = [];
+ 
+    idata2 = [];
+    
+    for(let i = 0;i < cv.width;++i) {
+    	let xs = []
+    	for(let j = 0;j < cv.height;++j) {
+    		let ys = [];
+    		for(let k = 0;k < 4;++k) {
+    			idata.data[(i * cv.width + j) * 4 + k] =  255 * Math.random();
+    			ys.push(0);
+    		}
+    		xs.push(ys);
+    		idata.data[(i * cv.width + j) * 4 + 3] =  255;
+    	}
+    	idata2.push(xs);
+    }
+   	ctx.putImageData(idata,0,0);
+           	   
+	function init() {
+		m = [];
+		for(let i = 0;i < 10;++i) {
+			m.push([
+				Math.round(15 * (Math.random() - 0.5)), //dx
+				Math.round(15 * (Math.random() - 0.5)), //dy
+				10 * (Math.random() - 0.5), //dc
+				10 * Math.random(), //fc
+				Math.trunc(3 * Math.random()), //ir
+				Math.trunc(3 * Math.random()), //ig
+				Math.trunc(3 * Math.random()), //ib
+			]);
+		}
+		
+		idata = ctx.getImageData(0,0,cv.width,cv.height);
+		idata2 = [];
+		
+		for(let i = 0;i < cv.width;++i) {
+			let xs = []
+			for(let j = 0;j < cv.height;++j) {
+				let ys = [];
+				for(let k = 0;k < 4;++k) {
+					idata.data[(i * cv.width + j) * 4 + k] =  255 * Math.random();
+					ys.push(0);
+				}
+				xs.push(ys);
+				idata.data[(i * cv.width + j) * 4 + 3] =  255;
+			}
+			idata2.push(xs);
+		}
+	   	ctx.putImageData(idata,0,0);
+	}
+	
+   	function key(evt) {
+        if(evt.key == "Enter" || evt.key == ".") {
+            document.getElementById("xy").innerHTML += "<span style='color:white'>User Interpretation -> " + document.getElementById("ef").value + "</span><br>";
+            document.getElementById("xy").innerHTML += "<span style='color:green'>User -> " + document.getElementById("ab").value + "</span><br>";
+            document.getElementById("xy").innerHTML += "<span style='color:black'>PC -> " + (new Tarot(document.getElementById("xy").innerHTML)).get() + "</span><br>";
+            document.getElementById("ef").value = "";
+            document.getElementById("ab").value = "";
+            document.getElementById("ef").focus();
+            window.setTimeout(function() {
+		    void(0);
+            var myDiv = document.getElementById("xy");
+            myDiv.scrollTop = myDiv.scrollHeight;
+	    },500);
+			init();
+        }
+    }
+ 
+ 	init();
+ 	
+    /*window.setInterval(function() {
+     	let mins = [];
+    	let maxs = [];
+    	for(let i = 0;i <4;++i) {
+    		mins.push(1000000);
+    		maxs.push(-1000000);
+    	}
+
+        for(let i = 10;i < cv.width - 10;++i) {
+        	for(let j = 10;j < cv.height - 10;++j) {
+    			for(let k = 0;k < 3;++k) {
+    				let c = 0;
+    				for(let l = 0;l < m.length;++l) {
+    					c += idata.data[((i + m[l][0]) * cv.width + (j + m[l][1])) * 4 + k + m[l][4 + k]] * m[l][2] + m[l][3];
+    				}
+    				idata2[(i * cv.width + j) * 4 + k] = c;
+    				if(c < mins[k]) mins[k] = c;
+    				if(c > maxs[k]) maxs[k] = c;
+    			}
+    			idata2[(i * cv.width + j) * 4 + 3] =  255;
+			}
+		}           	
+    
+        for(let i = 10;i < cv.width - 10;++i) {
+        	for(let j = 10;j < cv.height - 10;++j) {
+    			for(let k = 0;k < 3;++k) {
+       				idata.data[(i * cv.width + j) * 4 + k] = 255 * (idata2[(i * cv.width + j) * 4 + k] - mins[k]) / (maxs[k] - mins[k]);
+    			}
+    			idata.data[(i * cv.width + j) * 4 + 3] =  255;
+			}
+		}           	
+          		     	
+   		ctx.putImageData(idata,0,0);
+    },100);   */
+    document.getElementById("ef").focus();
+    document.getElementById("ab").onkeypress = key;
+    
+       
+            function speak() {
+            var msg = new SpeechSynthesisUtterance(); 
+            let xs = [(new Tarot(""+new Date())).get(),"Ich liebe dich","gibs mir","ja aaaa"];
+            if(Math.random() < 0.5)
+            msg.text = 'Haaaach ?'; 	
+            else
+                msg.text = xs[Math.trunc(Math.random() * xs.length)];
+            msg.volume = 1; // 0 to 1 	
+            msg.rate = 1.5 * Math.random(); // 0.1 to 10 
+            msg.pitch = 1 * Math.random()+1; //0 to 2 	
+            msg.onend = function(e) { window.setTimeout(speak,Math.round(2000*Math.random()))}; 	
+            speechSynthesis.speak(msg); 
+            }
+           // speak();
+        </script>
+        
+        <button onclick="speak()">haaaach</button>
+  <script >
+        function speak2() {
+            var msg = new SpeechSynthesisUtterance(); 
+            let xs = ["Ich liebe dich","gibs mir","ja aaaa"];
+    if(Math.random() < 0.5)
+     msg.text =  (new Tarot(""+new Date())).get();
+    else
+    msg.text = xs[Math.trunc(Math.random() * xs.length)];
+            msg.volume = 1; // 0 to 1 	
+            //msg.rate = 2 * Math.random(); // 0.1 to 10 
+            msg.pitch = 0.5 * Math.random()+1; //0 to 2 	
+            msg.onend = function(e) { window.setTimeout(speak2,Math.round(10000*Math.random()))}; 	
+            speechSynthesis.speak(msg); 
+            }
+            //speak2();
+        </script>
+        
+        <button onclick="speak2()">labersack</button>
+
+</body>
+</html>
+
+
+
