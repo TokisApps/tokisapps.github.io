@@ -250,7 +250,9 @@ Progress : <span id="abc"></span>
         window.setTimeout(() => {
             if(!computing) {
                 computing = true;
-                                
+                
+                Random(new Date() + "");
+                          
                 makeScale();
 
                 seconds = parseInt(document.getElementById("sec").value);

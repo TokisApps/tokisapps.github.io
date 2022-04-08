@@ -1,5 +1,67 @@
 
 
+function xmur3(str) {
+    for(var i = 0, h = 1779033703 ^ str.length; i < str.length; i++)
+        h = Math.imul(h ^ str.charCodeAt(i), 3432918353),
+        h = h << 13 | h >>> 19;
+    return function() {
+        h = Math.imul(h ^ h >>> 16, 2246822507);
+        h = Math.imul(h ^ h >>> 13, 3266489909);
+        return (h ^= h >>> 16) >>> 0;
+    }
+}
+
+function mulberry32(a) {
+    return function() {
+      var t = a += 0x6D2B79F5;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+}
+
+
+
+
+function Random(str) {
+	var seed = xmur3(str);
+	this.rnd = mulberry32(seed());
+
+	Math.random = this.rnd.bind(this);
+     ////////////////////////////////////////
+     // Fancy Random
+     
+    var oldRandom = Math.random;
+          	   
+    Math.random = function() {
+        let r = oldRandom();
+        let r2 = oldRandom();
+        let r3 = oldRandom();
+        let r4 = 20 * oldRandom();
+        
+        for(let i = 0;i < r4 + 20;++i) {
+        switch(Math.round(oldRandom() * 10000) % 9) {
+            case 0: r = Math.pow(r,r2);break;
+            case 1: r = Math.pow(r,1 / r2);break;
+            case 2: r = r + r2;break;
+            case 3: r = r - r2;break;
+            case 4: r = (Math.sin((r + r2) * Math.PI * 2 * r3) + 1) / 2;break;
+            case 5: r = (Math.cos((r + r2) * Math.PI * 2 * r3) + 1) / 2;break;
+            case 6: r = (Math.atan(r) + Math.PI/2) / Math.PI;break;
+            case 7: r = r * r2;break;
+            case 8: r = r / r2;break;
+        }
+        r = Math.abs(r);
+        r -= Math.floor(r);
+        }
+        
+        return r;
+    }
+    //
+    ///////////////////////////////////////////
+}
+
+
 
 
 
@@ -135,16 +197,15 @@ class Instrument {
     constructor(arr,add) {
         this.wave = arr;
         this.add = add;
-		this.r = new GeneralRandom();
         
-        let leftVol = 0.5 * this.r.random() + 0.5;
+        let leftVol = 0.5 * Math.random() + 0.5;
         this.chVols = [leftVol,1 - leftVol];
 
     }
     
     render(buffer,offset,tone,sampleRate,vol,len) {
 		const fr = Math.pow(2.0,tone / 12.0) * sampleRate / 44100.0;	
-        const n = Math.round(this.r.random() * 200);
+        const n = Math.round(Math.random() * 200);
         const channels = 2;
        
         for(var channel = 0; channel < channels; channel++) {
@@ -161,16 +222,13 @@ class Instrument {
 		let xs = [];
 		
 		for(let i = 0;i < 10;++i) {
-			let r = new GeneralRandom();
-			r = Math;
-			
-        	 let a = r.random();
-       	  	 let b = r.random();
-      	 	  let c = r.random();
-	         let d = r.random();
-	         let e = r.random();
-	         let f = r.random();
-	         let g = r.random();
+        	 let a = Math.random();
+       	  	 let b = Math.random();
+      	 	  let c = Math.random();
+	         let d = Math.random();
+	         let e = Math.random();
+	         let f = Math.random();
+	         let g = Math.random();
 			xs.push(add2(a,b,c,d,e,f,g,base));
 		}
 		

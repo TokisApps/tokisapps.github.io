@@ -5,41 +5,13 @@
    <title>Computer aided FBI / CAF</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<script src="MyLib.js"></script>
 
 <script>
-function xmur3(str) {
-    for(var i = 0, h = 1779033703 ^ str.length; i < str.length; i++)
-        h = Math.imul(h ^ str.charCodeAt(i), 3432918353),
-        h = h << 13 | h >>> 19;
-    return function() {
-        h = Math.imul(h ^ h >>> 16, 2246822507);
-        h = Math.imul(h ^ h >>> 13, 3266489909);
-        return (h ^= h >>> 16) >>> 0;
-    }
-}
-
-function mulberry32(a) {
-    return function() {
-      var t = a += 0x6D2B79F5;
-      t = Math.imul(t ^ t >>> 15, t | 1);
-      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
-      return ((t ^ t >>> 14) >>> 0) / 4294967296;
-    }
-}
-
-
-
-
-function Random(str) {
-	var seed = xmur3(str);
-	this.rnd = mulberry32(seed());
-	Math.random = this.rnd.bind(this);
-}
 	
 
 Array.prototype.rel = function() {
-    return this[Math.trunc(Math.random() * this.length)];
+    return this[Math.floor(Math.random() * this.length)];
 }
 
 
@@ -51,7 +23,7 @@ console.log([1,2,3,4,5].rel());
 
 class Tarot {
     constructor(str) {
-	    this.rand = new Random(str);
+	    Random(str);
     }
 
     noun(p) {
@@ -1121,7 +1093,7 @@ class Tarot {
     }
      
     noun2(p) {
-    	switch(Math.trunc(Math.random() * 2)) {
+    	switch(Math.floor(Math.random() * 2)) {
     		case 0:
     			return this.noun(p);
     		case 1:
@@ -1133,7 +1105,7 @@ class Tarot {
     }
        
     adjective2() {
-    	switch(Math.trunc(Math.random() * 2)) {
+    	switch(Math.floor(Math.random() * 2)) {
     		case 0:
     			return this.adjective();
     		case 1:
@@ -1170,7 +1142,7 @@ class Tarot {
     }
 
     time() {
-	   	switch(Math.trunc(Math.random() * 4)) {
+	   	switch(Math.floor(Math.random() * 4)) {
     		case 0:
     			return ["tomorrow","today","yesterday","in the evening","in the morning","at night"].rel() + " , ";
     		case 1:
@@ -1185,7 +1157,7 @@ class Tarot {
     get() {
     	let p = Math.random() < 0.5;
     	
-    	return this.time() + " " + this.attrNoun(p)+ " " + this.verb(Math.trunc(8 * Math.random()),p)+ " " + this.attrNoun(Math.random() < 0.5); 
+    	return this.time() + " " + this.attrNoun(p)+ " " + this.verb(Math.floor(8 * Math.random()),p)+ " " + this.attrNoun(Math.random() < 0.5); 
     }
 }
 </script>
@@ -1232,39 +1204,65 @@ new google.translate.TranslateElement({pageLanguage: 'en', layout: google.transl
     console.log(ctx);
     let idata = ctx.getImageData(0,0,cv.width,cv.height);
     let idata2;
+    let idata3;
     let m = [];
  
     idata2 = [];
+    idata3 = [];
     
     for(let i = 0;i < cv.width;++i) {
     	let xs = []
     	for(let j = 0;j < cv.height;++j) {
     		let ys = [];
     		for(let k = 0;k < 4;++k) {
-    			idata.data[(i * cv.width + j) * 4 + k] =  255 * Math.random();
     			ys.push(0);
     		}
     		xs.push(ys);
-    		idata.data[(i * cv.width + j) * 4 + 3] =  255;
     	}
     	idata2.push(xs);
     }
-   	ctx.putImageData(idata,0,0);
-           	   
+
+    for(let i = 0;i < cv.width;++i) {
+    	let xs = []
+    	for(let j = 0;j < cv.height;++j) {
+    		let ys = [];
+    		for(let k = 0;k < 4;++k) {
+    			ys.push(0);
+    		}
+    		xs.push(ys);
+    	}
+    	idata3.push(xs);
+    }
+     
+    
+    function randomizeRect(x,y,w,h) {
+		for(let i = 0;i < w - 2;++i) {
+			let xs = []
+			for(let j = 0;j < h - 2;++j) {
+				let ys = [];
+				for(let k = 0;k < 4;++k) {
+					idata2[i + x + 1][j + y + 1][k] =  255 * Math.random();
+				}
+			}
+		}
+    }
+    
 	function init() {
 		m = [];
-		for(let i = 0;i < 10;++i) {
+		for(let i = 0;i < 4;++i) {
 			m.push([
 				Math.round(15 * (Math.random() - 0.5)), //dx
 				Math.round(15 * (Math.random() - 0.5)), //dy
-				10 * (Math.random() - 0.5), //dc
-				10 * Math.random(), //fc
-				Math.trunc(3 * Math.random()), //ir
-				Math.trunc(3 * Math.random()), //ig
-				Math.trunc(3 * Math.random()), //ib
+				2 * (Math.random() - 0.5), //dc
+				2 * (Math.random() - 0.5), //dc
+				Math.floor(3 * Math.random()), //ir
+				Math.floor(3 * Math.random()), //ig
+				Math.floor(3 * Math.random()), //ib
 			]);
 		}
-		
+
+        console.log(m);
+        
 		idata = ctx.getImageData(0,0,cv.width,cv.height);
 		idata2 = [];
 		
@@ -1273,15 +1271,12 @@ new google.translate.TranslateElement({pageLanguage: 'en', layout: google.transl
 			for(let j = 0;j < cv.height;++j) {
 				let ys = [];
 				for(let k = 0;k < 4;++k) {
-					idata.data[(i * cv.width + j) * 4 + k] =  255 * Math.random();
 					ys.push(0);
 				}
 				xs.push(ys);
-				idata.data[(i * cv.width + j) * 4 + 3] =  255;
 			}
 			idata2.push(xs);
 		}
-	   	ctx.putImageData(idata,0,0);
 	}
 	
    	function key(evt) {
@@ -1303,40 +1298,67 @@ new google.translate.TranslateElement({pageLanguage: 'en', layout: google.transl
  
  	init();
  	
-    /*window.setInterval(function() {
-     	let mins = [];
-    	let maxs = [];
-    	for(let i = 0;i <4;++i) {
-    		mins.push(1000000);
-    		maxs.push(-1000000);
-    	}
+    window.setInterval(function() {
+		randomizeRect(0,0,10,cv.height);
+		randomizeRect(cv.width - 10,0,10,cv.height);
+		randomizeRect(0,0,cv.width,10);
+		randomizeRect(0,cv.height - 10,cv.width,10);
 
+
+        //apply matrix
         for(let i = 10;i < cv.width - 10;++i) {
         	for(let j = 10;j < cv.height - 10;++j) {
     			for(let k = 0;k < 3;++k) {
     				let c = 0;
     				for(let l = 0;l < m.length;++l) {
-    					c += idata.data[((i + m[l][0]) * cv.width + (j + m[l][1])) * 4 + k + m[l][4 + k]] * m[l][2] + m[l][3];
+    					c += (idata2[i + m[l][0]][j + m[l][1]][m[l][4 + k]] * m[l][2] + m[l][3]);// / Math.sqrt((m[l][0] * m[l][0] + m[l][1] * m[l][1]));
     				}
-    				idata2[(i * cv.width + j) * 4 + k] = c;
-    				if(c < mins[k]) mins[k] = c;
-    				if(c > maxs[k]) maxs[k] = c;
+    				idata3[i][j][k] = c;
     			}
-    			idata2[(i * cv.width + j) * 4 + 3] =  255;
+   				idata3[i][j][3] = 255;
 			}
-		}           	
+		}
+
+
+     	let mins = [];
+    	let maxs = [];
+    	for(let i = 0;i < 4;++i) {
+    		mins.push(1000000);
+    		maxs.push(-1000000);
+    	}
     
+        ////normalize
+        //min max measure
         for(let i = 10;i < cv.width - 10;++i) {
         	for(let j = 10;j < cv.height - 10;++j) {
     			for(let k = 0;k < 3;++k) {
-       				idata.data[(i * cv.width + j) * 4 + k] = 255 * (idata2[(i * cv.width + j) * 4 + k] - mins[k]) / (maxs[k] - mins[k]);
+    				c = idata3[i][j][k];
+    				if(c < mins[k]) mins[k] = c;
+    				if(c > maxs[k]) maxs[k] = c;
+    			}
+			}
+		}           	
+
+        //normalize
+        for(let i = 10;i < cv.width - 10;++i) {
+        	for(let j = 10;j < cv.height - 10;++j) {
+    			for(let k = 0;k < 3;++k) {
+       				idata2[i][j][k] = 255 * (idata3[i][j][k] - mins[k]) / (maxs[k] - mins[k]);
+    			}
+			}
+		}           	
+		
+        for(let i = 0;i < cv.width;++i) {
+        	for(let j = 0;j < cv.height;++j) {
+    			for(let k = 0;k < 3;++k) {
+       				idata.data[(i * cv.width + j) * 4 + k] = idata2[i][j][k];
     			}
     			idata.data[(i * cv.width + j) * 4 + 3] =  255;
 			}
 		}           	
           		     	
    		ctx.putImageData(idata,0,0);
-    },100);   */
+    },100);   
     document.getElementById("ef").focus();
     document.getElementById("ab").onkeypress = key;
     
@@ -1347,7 +1369,7 @@ new google.translate.TranslateElement({pageLanguage: 'en', layout: google.transl
             if(Math.random() < 0.5)
             msg.text = 'Haaaach ?'; 	
             else
-                msg.text = xs[Math.trunc(Math.random() * xs.length)];
+                msg.text = xs[Math.floor(Math.random() * xs.length)];
             msg.volume = 1; // 0 to 1 	
             msg.rate = 1.5 * Math.random(); // 0.1 to 10 
             msg.pitch = 1 * Math.random()+1; //0 to 2 	
@@ -1365,7 +1387,7 @@ new google.translate.TranslateElement({pageLanguage: 'en', layout: google.transl
     if(Math.random() < 0.5)
      msg.text =  (new Tarot(""+new Date())).get();
     else
-    msg.text = xs[Math.trunc(Math.random() * xs.length)];
+    msg.text = xs[Math.floor(Math.random() * xs.length)];
             msg.volume = 1; // 0 to 1 	
             //msg.rate = 2 * Math.random(); // 0.1 to 10 
             msg.pitch = 0.5 * Math.random()+1; //0 to 2 	
