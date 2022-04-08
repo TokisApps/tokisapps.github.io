@@ -218,7 +218,7 @@ class Instrument {
 	function instrumentsF(add2,base) {
 		let xs = [];
 		
-		for(let i = 0;i < 10;++i) {
+		for(let k = 0;k < 10;++k) {
         	 let a = Math.random();
        	  	 let b = Math.random();
       	 	  let c = Math.random();
@@ -226,7 +226,10 @@ class Instrument {
 	         let e = Math.random();
 	         let f = Math.random();
 	         let g = Math.random();
-			xs.push(add2(a,b,c,d,e,f,g,base));
+	         let h = Math.random();
+	         let i = Math.random();
+	         let j = Math.random();
+			xs.push(add2(a,b,c,d,e,f,g,h,i,j,base));
 		}
 		
 		let p = 1;// + 0.2 * Math.random();

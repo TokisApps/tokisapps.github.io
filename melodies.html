@@ -12,7 +12,7 @@ Progress : <span id="abc"></span>
 
     var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    var scale = new Array(15);
+    var scale = new Array(24);
     
     function makeScale() {
 	    let sc = [0,2,4,5,7,9,11];
@@ -58,7 +58,7 @@ Progress : <span id="abc"></span>
 	    for(let j = 0;j < 5;++j)
 	    for(let i = 0;i < sc.length;++i) 
 	    if(k < scale.length) {
-		    scale[k] = sc[i] + 12 * j + n - 12;
+		    scale[k] = sc[i] + 12 * j + n - 24;
 		    k += 1;
 	    }
 	    
@@ -234,7 +234,7 @@ Progress : <span id="abc"></span>
             if(!computing) {
                 computing = true;
                 
-                Random(new Date() + "");
+                if(document.getElementById("fr").checked) Random(new Date() + "");
                           
                 makeScale();
 
@@ -252,11 +252,11 @@ Progress : <span id="abc"></span>
     gpu.addFunction(function mypow(x,y) {
     	return Math.sign(x) * Math.pow(Math.abs(x),y);
     });
-    const add2 = gpu.createKernel(function (a,b,c,d,e,f,g,base) {
+    const add2 = gpu.createKernel(function (a,b,c,d,e,f,g,h,i,j,base) {
     	let x = 441.0 * Math.PI * this.thread.x / 44100.0 * Math.PI * Math.pow(2.0,(-24 + base) / 12.0);    		
-		return  (mypow(Math.sin(x),1.5 * a + 0.5) * (Math.cos(this.thread.x / (1500 + 15000 * b)) + 1)
-		    + mypow(Math.cos(x + g),1.5 * c + 0.5) * (Math.cos(this.thread.x / (1500 + 15000 * d)) + 1) )
-		    * (Math.atan(100 * f * (-this.thread.x - 10000 * (1 + 20 * e))) + Math.PI / 2);
+    	let y = h * mypow(Math.sin(x),1.5 * a + 0.5) * (Math.cos(this.thread.x / (1500 + 15000 * b)) + 1) + mypow(Math.cos(x + g),1.5 * c + 0.5) * (Math.cos(this.thread.x / (1500 + 15000 * d)) + 1)
+    	if(j < 0.5) y = Math.sign(y) * Math.pow(i + 1, Math.abs(y));
+		return  Math.atan(y) * (Math.atan(100 * f * (-this.thread.x - 10000 * (1 + 20 * e))) + Math.PI / 2);
     }).setOutput([200000]);
                 
                 bl = gpu.createKernel(blur).setOutput([frameCount]);
@@ -300,6 +300,8 @@ Seconds :
     <option value="120">120</option>
     <option value="180">180></option>
 </select>
+
+Fancy Random : <input type="checkbox" id="fr">
 
 <fieldset>
 <legend>Upcoming Scale Data</legend>
