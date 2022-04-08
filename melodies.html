@@ -10,9 +10,6 @@ Progress : <span id="abc"></span>
 
 <script>
 
-    const gpu = new GPU();
-
-
     var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
     var scale = new Array(15);
@@ -69,20 +66,6 @@ Progress : <span id="abc"></span>
 	    document.getElementById("scale").innerHTML = "[" + scale + "]";
     }
 
-
-    const add = gpu.createKernel(function (buffer,wave,offset,fr,channel,vol) {
-        return buffer[this.thread.x + offset] + 0.75 * vol * wave[Math.trunc(this.thread.x / 2.0 * 4.0 * fr + channel)] / 90000;
-    }).setOutput([44000]);
-    
-    gpu.addFunction(function mypow(x,y) {
-    	return Math.sign(x) * Math.pow(Math.abs(x),y);
-    });
-    const add2 = gpu.createKernel(function (a,b,c,d,e,f,g,base) {
-    	let x = 441.0 * Math.PI * this.thread.x / 44100.0 * Math.PI * Math.pow(2.0,(-24 + base) / 12.0);    		
-		return  (mypow(Math.sin(x),1.5 * a + 0.5) * (Math.cos(this.thread.x / (1500 + 15000 * b)) + 1)
-		    + mypow(Math.cos(x + g),1.5 * c + 0.5) * (Math.cos(this.thread.x / (1500 + 15000 * d)) + 1) )
-		    * (Math.atan(100 * f * (-this.thread.x - 10000 * (1 + 20 * e))) + Math.PI / 2);
-    }).setOutput([200000]);
 
     /*const add2base = gpu.createKernel(function (a,b,c,d,e,f,g) {
     	let x = 441.0 * Math.PI * this.thread.x / 44100.0 * 2 * Math.PI * Math.pow(2.0,Math.trunc(-70)  / 12.0);    		
@@ -175,7 +158,7 @@ Progress : <span id="abc"></span>
         var channels = 2;
         var seconds = 60;
         var frameCount = audioCtx.sampleRate * seconds;
-        let bl = blur.setOutput([frameCount]);
+        let bl = null;
         var myArrayBuffer;
         var ms;
         var ds;
@@ -258,6 +241,26 @@ Progress : <span id="abc"></span>
                 seconds = parseInt(document.getElementById("sec").value);
                 frameCount = audioCtx.sampleRate * seconds;
                 myArrayBuffer = audioCtx.createBuffer(channels, frameCount, audioCtx.sampleRate);
+
+
+    const gpu = new GPU();
+
+    const add = gpu.createKernel(function (buffer,wave,offset,fr,channel,vol) {
+        return buffer[this.thread.x + offset] + 0.75 * vol * wave[Math.trunc(this.thread.x / 2.0 * 4.0 * fr + channel)] / 90000;
+    }).setOutput([44000]);
+    
+    gpu.addFunction(function mypow(x,y) {
+    	return Math.sign(x) * Math.pow(Math.abs(x),y);
+    });
+    const add2 = gpu.createKernel(function (a,b,c,d,e,f,g,base) {
+    	let x = 441.0 * Math.PI * this.thread.x / 44100.0 * Math.PI * Math.pow(2.0,(-24 + base) / 12.0);    		
+		return  (mypow(Math.sin(x),1.5 * a + 0.5) * (Math.cos(this.thread.x / (1500 + 15000 * b)) + 1)
+		    + mypow(Math.cos(x + g),1.5 * c + 0.5) * (Math.cos(this.thread.x / (1500 + 15000 * d)) + 1) )
+		    * (Math.atan(100 * f * (-this.thread.x - 10000 * (1 + 20 * e))) + Math.PI / 2);
+    }).setOutput([200000]);
+                
+                bl = gpu.createKernel(blur).setOutput([frameCount]);
+                
                 var instruments0 = shuffle(instrumentsF(add2,0));   
                 
                  ms = [];

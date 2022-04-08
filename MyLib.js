@@ -181,17 +181,14 @@ class FractalHeightMap {
 
 
 
-let blur = null;
-
-   	if(typeof GPU != "undefined") blur = new GPU().createKernel(function (xs) {
+   	function blur(xs) {
    		let sum = 0;
    		let f = 0;
    		let n = 3;
    		for(let i = 0;i < n;++i) {let x = 1.0 * (n - i) / n;sum += x * xs[this.thread.x - i];f += x;}
    		for(let i = 0;i < n;++i) {let x = 1.0 * (n - i) / n;sum += x * xs[this.thread.x + i];f += x;}
    		return sum / f;
-   	});
-
+   	}
 
 class Instrument {
     constructor(arr,add) {
