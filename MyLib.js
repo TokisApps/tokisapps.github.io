@@ -21,6 +21,8 @@ function mulberry32(a) {
 }
 
 
+    var oldRandom = Math.random;
+
 
 
 function Random(str) {
@@ -31,7 +33,6 @@ function Random(str) {
      ////////////////////////////////////////
      // Fancy Random
      
-    var oldRandom = Math.random;
           	   
     Math.random = function() {
         let r = oldRandom();

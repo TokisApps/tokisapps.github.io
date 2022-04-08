@@ -234,7 +234,10 @@ Progress : <span id="abc"></span>
             if(!computing) {
                 computing = true;
                 
-                if(document.getElementById("fr").checked) Random(new Date() + "");
+                if(document.getElementById("fr").checked) 
+                    Random(new Date() + "");
+                else
+                    Math.random = oldRandom;
                           
                 makeScale();
 
