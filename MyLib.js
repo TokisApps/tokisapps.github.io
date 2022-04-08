@@ -896,7 +896,7 @@ class Chess {
 	}
 	
 	async _propose(board,i0,j0,mv0,mv1,n,zs) {
-		if(n <= 4) {
+		if(n <= 2) {
 			let xy = window.setInterval((() => {
 				for(let k = 0;k < this.workers.length;++k) {
 					let w = this.workers[k];
