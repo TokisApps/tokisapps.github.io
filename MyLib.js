@@ -242,14 +242,15 @@ class Instrument {
 				let n = 0;
 				for(let i = 0;i < x[j].length;++i) if(x[j][i] > _max) _max = x[j][i];		
 				for(let i = 0;i < x[j].length;++i) if(x[j][i] < _min) _min = x[j][i];	
-				for(let i = 0;i < x[j].length;++i) x[j][i] /= Math.max(Math.abs(_max),Math.abs(_min));
+				for(let i = 0;i < x[j].length;++i) x[j][i] = 2 * (x[j][i] - _min) / (_max - _min) - 1;
 				console.log(x[j]);
-				for(let i = 0;i < x[j].length;++i) for(k = i - 10;k < i + 10;++k) if(k > 0 && k < x[j].length) {sum += Math.pow(Math.abs(x[j][k]) * (1 / (1 + Math.pow(i - k,2))),p);n += 1;}
-				sum = Math.pow(Math.abs(sum),1.0 / p);
-				sum /= n;
-				console.log("sum " + sum);
-				for(let i = 0;i < x[j].length;++i) x[j][i] = x[j][i] / sum * 500.0;
-				console.log(x[j]);
+//				for(let i = 0;i < x[j].length;++i) for(k = i - 1;k < i + 1;++k) if(k > 0 && k < x[j].length) {sum += Math.pow(Math.abs(x[j][k]) * (1 / (1 + Math.pow(i - k,2))),p);n += 1;}
+				//for(let i = 0;i < x[j].length;++i) {sum += Math.abs(x[j][k]);n+=1;}
+				//sum = Math.pow(Math.abs(sum),1.0 / p);
+				//sum /= n;
+				//console.log("sum " + sum);
+				//for(let i = 0;i < x[j].length;++i) x[j][i] = x[j][i] / sum * 500.0;
+				//console.log(x[j]);
 		    }
 		});
 	 

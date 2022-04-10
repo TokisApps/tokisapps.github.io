@@ -1,0 +1,203 @@
+<html>
+<head>
+	<meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/gpu.js@latest/dist/gpu-browser.min.js"></script>
+</head>
+<body>
+
+<script>
+
+
+    class Individual {
+        constructor() {
+            this.xs = [];
+            for(let i = 0;i < 10;++i) this.xs.push(Math.random());
+            this.reward = 0.5;
+        }
+        
+        random() {
+            return new Individual();
+        }
+    
+        neutral() {
+            let x = this.copy();
+            for(let i = 0;i < x.xs.length;++i) x.xs[i] = 0;
+            return x;
+        }
+        
+        scale(factor) {
+            let x = this.copy();
+            for(let i = 0;i < x.xs.length;++i) x.xs[i] *= factor;
+            return x;
+        }
+
+        mutate() {
+            let x = this.copy();
+            for(let i = 0;i < x.xs.length;++i) x.xs[i] += 0.4 * (Math.random() - 0.5);
+            return x;
+        }
+        
+        add(individual) {
+            let x = this.copy();
+            for(let i = 0;i < x.xs.length;++i) x.xs[i] += individual.xs[i];
+            return x;
+        }
+        
+        copy() {
+            let x = new Individual();
+            for(let i = 0;i < x.xs.length;++i) x.xs[i] = this.xs[i];
+            return x;
+        }
+        
+        render() {
+            let div = document.createElement("div");
+            let b1 = document.createElement("button");
+            b1.innerHTML = "Play";
+            div.appendChild(b1);
+            b1.addEventListener("click",this.play.bind(this));
+            let inp = document.createElement("input");
+            inp.min = 0;
+            inp.max = 1;
+            inp.step = 0.01;
+            inp.type = "range";
+            div.appendChild(inp);
+            let span = document.createElement("span");
+            div.appendChild(span);
+            span.innerHTML = this.reward;
+            
+            inp.addEventListener("change",((evt) => {
+                this.reward = parseFloat(inp.value);
+                span.innerHTML = "" + this.reward;
+            }).bind(this));
+            
+            let span2 = document.createElement("span");
+            div.appendChild(span2);
+            span2.innerHTML = " [" + this.xs + "]";
+            return div;
+        }
+        
+        play() {
+                const channels = 2;
+                const seconds = 5;
+                const frameCount = audioCtx.sampleRate * seconds;
+                const buffer = audioCtx.createBuffer(channels, frameCount, audioCtx.sampleRate);
+
+                const xs = add2(this.xs[0],this.xs[1],this.xs[2],this.xs[3],this.xs[4],this.xs[5],this.xs[6],this.xs[7],this.xs[8],this.xs[9],10);
+
+                console.log(xs);
+                let minimum = 100000000;
+                let maximum = -100000000;
+                
+                xs.forEach((x) => {
+                    if(x < minimum) minimum = x;
+                    if(x > maximum) maximum = x;
+                });
+
+                for(var channel = 0; channel < channels; channel++) {
+                    var nowBuffering = buffer.getChannelData(channel);
+                    for(let i = 0;i < xs.length;++i) 
+                        if(i < nowBuffering.length)
+                            nowBuffering[i] = 2 * (xs[i] - minimum) / (maximum - minimum) - 1;
+            	}	
+                
+                var source = audioCtx.createBufferSource();
+                // source.onended = () => {playing = false};
+                // set the buffer in the AudioBufferSourceNode
+                source.buffer = buffer;
+                // connect the AudioBufferSourceNode to the
+                // destination so we can hear the sound
+                
+                source.connect(audioCtx.destination);
+                source.start();
+        }
+    }
+    
+    class GeneticAlgorithm {
+        constructor(poolSize,individual0) {
+            this.pool = [];
+            for(let k = 0;k < poolSize;++k) this.pool.push(individual0.random());
+            this.ol = document.createElement("ol");
+            this.render();
+            
+        }
+        
+        epoch() {
+            let minimum = 100000000;
+            let maximum = -10;
+            
+            this.pool.forEach((x) => {
+                if(x.reward < minimum) minimum = x.reward;
+                if(x.reward > maximum) maximum = x.reward;
+            });
+            
+            let x2 = this.pool[0].neutral();
+            let sum = 0;
+            this.pool.forEach((x) => {
+                let f = (x.reward - minimum) / (maximum - minimum);
+                x2 = x2.add(x.scale(f));
+                sum += f;
+            });
+            x2 = x2.scale(1.0 / sum);
+            
+            this.elementOfTheEpoch = x2;
+            
+            let ps = this.pool.length;
+            this.pool = [];
+            for(let k = 0;k < ps;++k) this.pool.push(x2.mutate());
+        }
+        
+        render() {
+            this.ol.innerHTML = "";
+            
+            this.pool.forEach(((x) => {
+                let li = document.createElement("li");
+                li.appendChild(x.render());
+                this.ol.appendChild(li);
+            }).bind());
+            
+            let b = document.createElement("button");
+            b.innerHTML = "Epoch";
+            let li = document.createElement("li");
+            li.appendChild(b);
+            this.ol.appendChild(li);
+            
+            b.addEventListener("click",((evt) => {
+                this.epoch();
+                this.render()
+            }).bind(this));
+        }
+    }
+
+
+
+    var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    const gpu = new GPU();
+    
+    gpu.addFunction(function mypow(x,y) {
+    	return Math.sign(x) * Math.pow(Math.abs(x),y);
+    });
+    const add2 = gpu.createKernel(function (a,b,c,d,e,f,g,h,i,j,base) {
+    	let x = 441.0 * Math.PI * this.thread.x / 44100.0 * Math.PI * Math.pow(2.0,(-24 + base) / 12.0);    		
+    	let exp0 = 10.0 * a;
+    	let exp1 = 10.0 * c;
+    	let freq0 = 20000.0 * b;
+    	let freq1 = 20000.0 * d;
+    	let y = 2 * h * mypow(Math.sin(x),exp0) * (Math.cos(this.thread.x / freq0) + 1) + mypow(Math.cos(x / 2.0 + g),exp1) * (Math.cos(this.thread.x / freq1) + 1)
+    	if(j < 0.5) y = Math.sign(y) * Math.pow(i + 1, Math.abs(y));
+    	let phase = e;
+    	phase *= 44100.0
+		return  Math.atan(y) * (-Math.atan((10 * f * this.thread.x - phase)) + Math.PI / 2);
+    }).setOutput([200000]);
+                
+    let ga = new GeneticAlgorithm(10,new Individual());
+    document.body.appendChild(ga.ol);  
+</script>
+
+
+
+
+
+</body>
+</html>
+

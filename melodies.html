@@ -286,7 +286,7 @@ Progress : <span id="abc"></span>
     	let freq1 = 20000.0 * (d + 0.1);
     	let y = h * mypow(Math.sin(x),exp0) * (Math.cos(this.thread.x / freq0) + 1) + (1 - h) * mypow(Math.cos(x / 2.0 + g),exp1) * (Math.cos(this.thread.x / freq1) + 1)
     	//if(j < 0.35) y = Math.sign(y) * Math.pow(i + 1, Math.abs(y));
-    	let phase = 3 * e + 4;
+    	let phase = 4 * e + 4;
     	phase *= 48000.0
     	y = y * (i + 1)
 		return  (j * Math.sin(y) + (1 - j) * Math.atan(y)) * (-Math.atan((10 * f * this.thread.x - phase)) + Math.PI / 2);
