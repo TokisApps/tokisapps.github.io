@@ -89,7 +89,7 @@ Progress : <span id="abc"></span>
         
         play(buffer,offset,tone,sampleRate) {
             if(this.index % this.q == this.d) {
-                this.instrument.render(buffer,offset,this.tone,sampleRate,10,100);
+                this.instrument.render(buffer,offset,scale[0],sampleRate,8.0,100);
             }
             this.index += 1;
         }
@@ -98,13 +98,13 @@ Progress : <span id="abc"></span>
     class Drum {
         constructor(instrument) {
             this.instrument = instrument;
-            this.tone = -Math.trunc(4 * Math.random());
+            this.tone = Math.floor(4 * Math.random());
             this.i = 0;
         }
         
         play(buffer,offset,tone,sampleRate) {
             if(Math.random() < 0.25) {
-                this.instrument.render(buffer,offset,this.tone,sampleRate,8.0,100);
+                this.instrument.render(buffer,offset,scale[this.tone],sampleRate,6.0,100);
             }
         }
     }
@@ -284,10 +284,12 @@ Progress : <span id="abc"></span>
     	let exp1 = 1.5 * c + 0.5;
     	let freq0 = 20000.0 * (b + 0.1);
     	let freq1 = 20000.0 * (d + 0.1);
-    	let y = 2 * h * mypow(Math.sin(x),exp0) * (Math.cos(this.thread.x / freq0) + 1) + mypow(Math.cos(x / 2.0 + g),exp1) * (Math.cos(this.thread.x / freq1) + 1)
-    	let phase = 3 * e + 3;
+    	let y = h * mypow(Math.sin(x),exp0) * (Math.cos(this.thread.x / freq0) + 1) + (1 - h) * mypow(Math.cos(x / 2.0 + g),exp1) * (Math.cos(this.thread.x / freq1) + 1)
+    	//if(j < 0.35) y = Math.sign(y) * Math.pow(i + 1, Math.abs(y));
+    	let phase = 3 * e + 4;
     	phase *= 48000.0
-		return  Math.sin(y) * (-Math.atan((10 * f * this.thread.x - phase)) + Math.PI / 2);
+    	y = y * (i + 1)
+		return  (j * Math.sin(y) + (1 - j) * Math.atan(y)) * (-Math.atan((10 * f * this.thread.x - phase)) + Math.PI / 2);
     }).setOutput([200000]);
                     
                 
