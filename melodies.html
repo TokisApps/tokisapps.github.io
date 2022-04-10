@@ -289,7 +289,7 @@ Progress : <span id="abc"></span>
     	let phase = 4 * e + 4;
     	phase *= 48000.0
     	y = y * (i + 1)
-		return  (j * Math.sin(y) + (1 - j) * Math.atan(y)) * (-Math.atan((10 * f * this.thread.x - phase)) + Math.PI / 2);
+		return  (j * Math.sin(y * Math.PI / 2) + (1 - j) * Math.atan(y) / Math.PI * 2) * (-Math.atan((10 * f * this.thread.x - phase)) + Math.PI / 2);
     }).setOutput([200000]);
                     
                 
