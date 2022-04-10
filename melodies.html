@@ -89,7 +89,7 @@ Progress : <span id="abc"></span>
         
         play(buffer,offset,tone,sampleRate) {
             if(this.index % this.q == this.d) {
-                this.instrument.render(buffer,offset,this.tone,sampleRate,3.5,100);
+                this.instrument.render(buffer,offset,this.tone,sampleRate,10,100);
             }
             this.index += 1;
         }
@@ -104,7 +104,7 @@ Progress : <span id="abc"></span>
         
         play(buffer,offset,tone,sampleRate) {
             if(Math.random() < 0.25) {
-                this.instrument.render(buffer,offset,this.tone,sampleRate,2.0,100);
+                this.instrument.render(buffer,offset,this.tone,sampleRate,8.0,100);
             }
         }
     }
@@ -249,18 +249,50 @@ Progress : <span id="abc"></span>
     const gpu = new GPU();
 
     const add = gpu.createKernel(function (buffer,wave,offset,fr,channel,vol) {
-        return buffer[this.thread.x + offset] + 0.75 * vol * wave[Math.trunc(this.thread.x / 2.0 * 4.0 * fr + channel)] / 90000;
+        return buffer[this.thread.x + offset] + 0.75 * vol * wave[Math.trunc(this.thread.x / 2.0 * 4.0 * fr + channel)] / 20;
     }).setOutput([44000]);
     
     gpu.addFunction(function mypow(x,y) {
     	return Math.sign(x) * Math.pow(Math.abs(x),y);
     });
+/*
     const add2 = gpu.createKernel(function (a,b,c,d,e,f,g,h,i,j,base) {
     	let x = 441.0 * Math.PI * this.thread.x / 44100.0 * Math.PI * Math.pow(2.0,(-24 + base) / 12.0);    		
     	let y = h * mypow(Math.sin(x),1.5 * a + 0.5) * (Math.cos(this.thread.x / (1500 + 15000 * b)) + 1) + mypow(Math.cos(x + g),1.5 * c + 0.5) * (Math.cos(this.thread.x / (1500 + 15000 * d)) + 1)
     	if(j < 0.5) y = Math.sign(y) * Math.pow(i + 1, Math.abs(y));
 		return  Math.atan(y) * (Math.atan(100 * f * (-this.thread.x - 10000 * (1 + 20 * e))) + Math.PI / 2);
     }).setOutput([200000]);
+*/  
+
+/*              
+    const add2 = gpu.createKernel(function (a,b,c,d,e,f,g,h,i,j,base) {
+    	let x = 441.0 * Math.PI * this.thread.x / 44100.0 * Math.PI * Math.pow(2.0,(-24 + base) / 12.0);    		
+    	let exp0 = 1.5 * a + 0.5;
+    	let exp1 = 1.5 * c + 0.5;
+    	let freq0 = 20000.0 * b + 1000;
+    	let freq1 = 20000.0 * d + 1000;
+    	let y = 2 * h * mypow(Math.sin(x),exp0) * (Math.cos(this.thread.x / freq0) + 1) + mypow(Math.cos(x / 2.0 + g),exp1) * (Math.cos(this.thread.x / freq1) + 1)
+    	//if(j < 0.5) y = Math.sign(y) * Math.pow(i + 1, Math.abs(y));
+    	let phase = e + 2;
+    	phase *= 88000.0
+		return  Math.atan(y) * (-Math.atan((10 * f * this.thread.x - phase)) + Math.PI / 2);
+    }).setOutput([200000]);
+  */
+    const add2 = gpu.createKernel(function (a,b,c,d,e,f,g,h,i,j,base) {
+    	let x = 441.0 * Math.PI * this.thread.x / 44100.0 * Math.PI * Math.pow(2.0,(base - 12) / 12.0);    		
+    	let exp0 = 1.5 * a + 0.5;
+    	let exp1 = 1.5 * c + 0.5;
+    	let freq0 = 20000.0 * (b + 0.1);
+    	let freq1 = 20000.0 * (d + 0.1);
+    	let y = 2 * h * mypow(Math.sin(x),exp0) * (Math.cos(this.thread.x / freq0) + 1) + mypow(Math.cos(x / 2.0 + g),exp1) * (Math.cos(this.thread.x / freq1) + 1)
+    	let phase = 3 * e + 3;
+    	phase *= 48000.0
+		return  Math.sin(y) * (-Math.atan((10 * f * this.thread.x - phase)) + Math.PI / 2);
+    }).setOutput([200000]);
+                    
+                
+                
+                
                 
                 bl = gpu.createKernel(blur).setOutput([frameCount]);
                 
