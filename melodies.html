@@ -52,7 +52,7 @@ Progress : <span id="abc"></span>
 	    
 	    document.getElementById("newbasescale").innerHTML = "[" + sc + "]";
 	    
-	    let n = rand(2);
+	    let n = rand(4);
 	    
 	    let k = 0;
 	    for(let j = 0;j < 5;++j)
@@ -123,10 +123,14 @@ Progress : <span id="abc"></span>
 		    let _max = -100000;
 		    for(let i = 0;i < this.tones.length;++i) if(this.tones[i] > _max) _max = this.tones[i];		
 		    for(let i = 0;i < this.tones.length;++i) if(this.tones[i] < _min) _min = this.tones[i];
-		    let min = Math.trunc(this.r.random() * (scale.length / 2)	);
-		    let max = (scale.length - 1) - Math.trunc(this.r.random() * (scale.length - min - 5));
-		    //min = 0;
-		    //max = scale.length - 1;
+		    
+		    let min = 0;
+		    let max = 0;
+		    
+		    do {
+		        min = Math.floor(Math.random() * scale.length);
+		        max = Math.floor(Math.random() * scale.length);
+		    } while(min > max - 4);
 		    for(let i = 0;i < this.tones.length;++i) this.tones[i] = Math.round((max - min) * (this.tones[i] - _min) / (_max - _min) + min);
 		    console.log(min + " / " + max);
 		    this.i = 0;
@@ -288,8 +292,7 @@ Progress : <span id="abc"></span>
     	//if(j < 0.35) y = Math.sign(y) * Math.pow(i + 1, Math.abs(y));
     	let phase = 4 * e + 4;
     	phase *= 48000.0
-    	y = y * (i + 1)
-		return  (j * Math.sin(y * Math.PI / 2) + (1 - j) * Math.atan(y) / Math.PI * 2) * (-Math.atan((10 * f * this.thread.x - phase)) + Math.PI / 2);
+		return  (j * Math.sin(y * Math.PI / 2) + (1 - j) * Math.atan(y * 3 * (i + 1)) / Math.PI * 2) * (-Math.atan((10 * f * this.thread.x - phase)) + Math.PI / 2);
     }).setOutput([200000]);
                     
                 
