@@ -196,7 +196,7 @@ class Instrument {
         this.wave = arr;
         this.add = add;
         
-        let leftVol = 0.5 * Math.random() + 0.5;
+        let leftVol = Math.random();
         this.chVols = [leftVol,1 - leftVol];
 
     }
