@@ -107,27 +107,29 @@ function xClick(evt) {
 class Board {	
 	domElementClick(evt) {
 		x = this.board[this.mousex + this.w * this.mousey];
-		if(this.domButtonLockElement.checked) x.src = x.src1;
+		if(this.domButtonLockElement.checked && x) x.src = x.src1;
 		this.board[this.mousex + this.w * this.mousey] = null;
 		this.lastx = this.mousex;
 		this.lasty = this.mousey;
 		this.render();
-		document.body.appendChild(x);
-		
-		var cv = this.domElement;
-		var xy = getOffset(cv);
-		
-		x.style.width = 200;
-		x.style.position = "absolute";
-		x.style.zIndex = "10";	
-		x.style.top = evt.pageY - Math.round(x.offsetHeight / 2);
-		x.style.left = evt.pageX - Math.round(x.offsetWidth / 2);
-		x.style.opacity = 0.5;
-		
-		x.addEventListener("mousemove",xMouseMove);
-		x.addEventListener("touchmove",xMouseMove);
-		x.addEventListener("click",xClick);
-		x.onload = render;
+		if(x) {
+			document.body.appendChild(x);
+			
+			var cv = this.domElement;
+			var xy = getOffset(cv);
+			
+			x.style.width = 200;
+			x.style.position = "absolute";
+			x.style.zIndex = "10";	
+			x.style.top = evt.pageY - Math.round(x.offsetHeight / 2);
+			x.style.left = evt.pageX - Math.round(x.offsetWidth / 2);
+			x.style.opacity = 0.5;
+			
+			x.addEventListener("mousemove",xMouseMove);
+			x.addEventListener("touchmove",xMouseMove);
+			x.addEventListener("click",xClick);
+			x.onload = render;
+		}
 	}
 	
 	constructor() {
@@ -277,10 +279,11 @@ class Board {
 		
 		var c = 0;
 		for(var i = 0;i < this.w;++i) {
+			var c2 = c;
 			for(var j = 0;j < this.h;++j) {
-				ctx.fillStyle = c ? "darkgray" : "lightgray";
+				ctx.fillStyle = c2 ? "darkgray" : "lightgray";
 				ctx.fillRect(i * cv.width / this.w,j * cv.height / this.h,cv.width / this.w,cv.height / this.h);
-				c = 1 - c;
+				c2 = 1 - c2;
 			}
 			c = 1 - c;
 		}
@@ -316,7 +319,7 @@ class Board {
 class EmptyBoard extends Board { 
 	reset() {
 		this.w = 20;
-		this.h = 4;
+		this.h = 5;
 
 		this.domElement.width = this.w * 100;
 		this.domElement.height = this.h * 100;
@@ -403,7 +406,7 @@ function shuffle(xs) {
 
 class CardSet extends Board {
 	reset() {
-		this.w = this.h = 8;
+		this.w = this.h = 7;
 	
 		let xs = ["d","h","s","c"];
 		let ys = [0,1,10,11];
@@ -428,7 +431,7 @@ class CardSet extends Board {
 
 class RWTarotCardSet extends Board {
 	reset() {
-		this.w = this.h = 10;
+		this.w = this.h = 9;
 	
 		this.board = [];
 		

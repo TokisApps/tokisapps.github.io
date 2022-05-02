@@ -1,5 +1,4 @@
 
-
 function xmur3(str) {
     for(var i = 0, h = 1779033703 ^ str.length; i < str.length; i++)
         h = Math.imul(h ^ str.charCodeAt(i), 3432918353),
@@ -177,89 +176,6 @@ class FractalHeightMap {
 
 
 
-
-
-
-
-
-   	function blur(xs) {
-   		let sum = 0;
-   		let f = 0;
-   		let n = 3;
-   		for(let i = 0;i < n;++i) {let x = 1.0 * (n - i) / n;sum += x * xs[this.thread.x - i];f += x;}
-   		for(let i = 0;i < n;++i) {let x = 1.0 * (n - i) / n;sum += x * xs[this.thread.x + i];f += x;}
-   		return sum / f;
-   	}
-
-class Instrument {
-    constructor(arr,add) {
-        this.wave = arr;
-        this.add = add;
-        
-        let leftVol = Math.random();
-        this.chVols = [leftVol,1 - leftVol];
-
-    }
-    
-    render(buffer,offset,tone,sampleRate,vol,len) {
-		const fr = Math.pow(2.0,tone / 12.0) * sampleRate / 44100.0;	
-        const n = Math.round(Math.random() * 200);
-        const channels = 2;
-       
-        for(var channel = 0; channel < channels; channel++) {
-            var nowBuffering = buffer.getChannelData(channel);
-            var xs = this.add(nowBuffering,this.wave,offset + n,fr,channel,vol * this.chVols[channel]);
-            for(let i = 0;i < len * 8000 && i < xs.length;++i) 
-                if(i + offset + n < nowBuffering.length)
-                    nowBuffering[i + offset + n] = xs[i];
-    	}	
-    }
-}
-
-	function instrumentsF(add2,base) {
-		let xs = [];
-		
-		for(let k = 0;k < 10;++k) {
-        	 let a = Math.random();
-       	  	 let b = Math.random();
-      	 	  let c = Math.random();
-	         let d = Math.random();
-	         let e = Math.random();
-	         let f = Math.random();
-	         let g = Math.random();
-	         let h = Math.random();
-	         let i = Math.random();
-	         let j = Math.random();
-			xs.push(add2(a,b,c,d,e,f,g,h,i,j,base));
-		}
-		
-		let p = 1;// + 0.2 * Math.random();
-		[xs].forEach((x) => {
-		    for(let j = 0;j < x.length;++j) {
-				let _min = 100000;
-				let _max = -100000;
-				let sum = 0;
-				let n = 0;
-				for(let i = 0;i < x[j].length;++i) if(x[j][i] > _max) _max = x[j][i];		
-				for(let i = 0;i < x[j].length;++i) if(x[j][i] < _min) _min = x[j][i];	
-				for(let i = 0;i < x[j].length;++i) x[j][i] = 2 * (x[j][i] - _min) / (_max - _min) - 1;
-				console.log(x[j]);
-//				for(let i = 0;i < x[j].length;++i) for(k = i - 1;k < i + 1;++k) if(k > 0 && k < x[j].length) {sum += Math.pow(Math.abs(x[j][k]) * (1 / (1 + Math.pow(i - k,2))),p);n += 1;}
-				//for(let i = 0;i < x[j].length;++i) {sum += Math.abs(x[j][k]);n+=1;}
-				//sum = Math.pow(Math.abs(sum),1.0 / p);
-				//sum /= n;
-				//console.log("sum " + sum);
-				//for(let i = 0;i < x[j].length;++i) x[j][i] = x[j][i] / sum * 500.0;
-				//console.log(x[j]);
-		    }
-		});
-	 
- 		console.log(xs[0]);
-		
-		return xs;
-	}
-
-
 function fractal(cfg) {
 	let mathx = (cfg[3] - cfg[2]) * this.thread.x / cfg[0] + cfg[2];
 	let mathy = cfg[5] - (cfg[5] - cfg[4]) * this.thread.y / cfg[1];
@@ -310,6 +226,7 @@ function fractal(cfg) {
 		}
 	}
 	this.color(0,0,0,0);
+	return 0;
 }
 
 
@@ -329,7 +246,7 @@ xs = xs.slice(0);
 }
 
 function rand(n) {
-    return Math.round(100000 * Math.random()) % n;
+    return Math.floor(n * Math.random() * 0.999999);
 }
 
 class GeneralRandom {
@@ -901,7 +818,7 @@ class Chess {
 	}
 	
 	async _propose(board,i0,j0,mv0,mv1,n,zs) {
-		if(n <= 2) {
+		if(n <= 3) {
 			let xy = window.setInterval((() => {
 				for(let k = 0;k < this.workers.length;++k) {
 					let w = this.workers[k];
@@ -975,14 +892,14 @@ class Chess {
 				}).bind(this));
 				zs.push([m0,xs]);
 			}
-		}).bind(this),100);
+		}).bind(this),10);
 	}
 	
 	propose(n) {
 		this.thinking = true;
 		
 		this.workers = [];
-		for(let i = 0;i < 32;++i) this.workers.push(new Worker("ChessWorker.js"));
+		for(let i = 0;i < 5;++i) this.workers.push(new Worker("ChessWorker.js"));
 		this.workers.forEach(w => {
 			w.done = true;
 		});
@@ -1066,7 +983,7 @@ class Chess {
 				this.progress = 100.0 * zs.length / (num + 1);
 				this.render();
 			}
-		}).bind(this),100);
+		}).bind(this),10);
 	}
 }
 
