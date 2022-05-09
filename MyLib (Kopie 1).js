@@ -305,7 +305,7 @@ class Chess {
 			 "  (<input type='checkbox' id='" + this.cvID + "3'> Coop)  "
 			 + "</legend>");
 		document.write("<canvas width=300 height=300 id='" + this.cvID + "'></canvas>");
-		document.write("<br><table><tr><td><select id='" + this.cvID + "1'><option value=0>0</option><option value=1>1</option><option value=2>2</option><option value=3>3</option><option value=4>4</option><option value=5>5</option></select>");
+		document.write("<br><table><tr><td><select id='" + this.cvID + "1'><option value=0>0</option><option value=1>1</option><option value=2>2</option><option value=3>3</option><option value=4>4</option></select>");
 		document.write("<button id='" + this.cvID + "2'>Vorschlag</button>");
 		document.write("</td><td id='" + this.cvID + "0'></td></tr></table>");
 		
@@ -818,27 +818,79 @@ class Chess {
 	}
 	
 	async _propose(board,i0,j0,mv0,mv1,n,zs) {
-		let xy = window.setInterval((() => {
-			for(let k = 0;k < this.workers.length;++k) {
-				let w = this.workers[k];
-				if(w.done) {
-					window.clearInterval(xy);
-					w.done = false;
-					w.onmessage = ((m) => {
-						let xs = {};
-						xs[[i0,j0,mv0,mv1] + ""] = 1;
-						zs.push([m.data[1],xs]);
-						w.done = true;
-					}).bind(this);
-					w.postMessage({
-						type : this.constructor.name,
-						thisBoard : this.cloneBoard(this.board),
-						n : n,
-						_team : this.team(),
-						board : this.cloneBoard(board),
-					});
-					break;
+		if(n <= 3) {
+			let xy = window.setInterval((() => {
+				for(let k = 0;k < this.workers.length;++k) {
+					let w = this.workers[k];
+					if(w.done) {
+						window.clearInterval(xy);
+						w.done = false;
+						w.onmessage = ((m) => {
+							let xs = {};
+							xs[[i0,j0,mv0,mv1] + ""] = 1;
+							zs.push([m.data[1],xs]);
+							w.done = true;
+						}).bind(this);
+						w.postMessage({
+							type : this.constructor.name,
+							thisBoard : this.cloneBoard(this.board),
+							n : n,
+							_team : this.team(),
+							board : this.cloneBoard(board),
+						});
+						break;
+					}
 				}
+			}).bind(this),100);
+			
+			return;
+		}
+
+		let num = 0;
+		let zs2 = [];
+
+		for(let i = 0;i < 8;++i)
+		for(let j = 0;j < 8;++j)
+		if(board[i + 8 * j] && (board[i + 8 * j].color == board.color || this.team())) {
+			let ms = this.endFilter(board,1,i,j,this.moveFilter(board,i,j,this.getMoves(board,i,j)));
+			ms.forEach((mv => {
+				let b = this.doMove(board,i,j,mv);
+				num += 1;
+				this._propose(b,i0,j0,mv0,mv1,n - 1,zs2);
+			}).bind(this));
+		}
+		
+		let iv = window.setInterval((() => {
+			if(zs2.length == num) {
+				window.clearInterval(iv);
+				let m0 = null;
+				let xs = {};
+				zs2.forEach(((m) => {
+					if(m0 == null) {
+						m0 = m[0];
+						xs = {};
+					}
+					if(this.team()) {
+						if(m[0] > m0) {
+							m0 = m[0];
+							xs = {};
+						}
+
+					} else {
+						if(board.color == "white" && m[0] > m0) {
+							m0 = m[0];
+							xs = {};
+						} else if(board.color == "black" && m[0] < m0) {
+
+							m0 = m[0];
+							xs = {};
+						}
+					}
+					if(m[0] == m0) {
+						xs[[i0,j0,mv0,mv1] + ""] = 1;
+					}
+				}).bind(this));
+				zs.push([m0,xs]);
 			}
 		}).bind(this),10);
 	}
@@ -884,20 +936,24 @@ class Chess {
 				zs.forEach(((m) => {
 					if(m0 == null) {
 						m0 = m[0];
+						xs = {};
 					}
 					if(this.team()) {
 						if(m[0] > m0) {
 							m0 = m[0];
+							xs = {};
 						}
+
 					} else {
 						if(board.color == "white" && m[0] > m0) {
 							m0 = m[0];
+							xs = {};
 						} else if(board.color == "black" && m[0] < m0) {
+
 							m0 = m[0];
+							xs = {};
 						}
 					}
-				}).bind(this));
-				zs.forEach(((m) => {
 					if(m[0] == m0) {
 						Object.keys(m[1]).forEach(y => {
 							xs[y] = 1;
@@ -1140,49 +1196,6 @@ class ClassicChess extends Chess {
 
 
 
-
-
-class BlitzChess extends ClassicChess {
-	name() {
-		return "Blitz Schach";
-	}
-		
-	init() {
-		this.board = [];
-		for(var i = 0;i < 64;++i) this.board.push(null);
-		
-		this.board[0] = this.loadPiece("rook","rdd129","black");
-		this.board[1] = this.loadPiece("knight","ndd129","black");
-		this.board[2] = this.loadPiece("bishop","bdd129","black");
-		this.board[3] = this.loadPiece("queen","qdd129","black");
-		this.board[4] = this.loadPiece("king","kdd129","black");
-		this.board[5] = this.loadPiece("bishop","bdd129","black");
-		this.board[6] = this.loadPiece("knight","ndd129","black");
-		this.board[7] = this.loadPiece("rook","rdd129","black");
-		
-		for(var i = 0;i < 8;++i) this.board[8 + i] = this.loadPiece("pawn","pld129","white");
-		
-		this.board[56] = this.loadPiece("rook","rld129","white");
-		this.board[57] = this.loadPiece("knight","nld129","white");
-		this.board[58] = this.loadPiece("bishop","bld129","white");
-		this.board[59] = this.loadPiece("queen","qld129","white");
-		this.board[60] = this.loadPiece("king","kld129","white");
-		this.board[61] = this.loadPiece("bishop","bld129","white");
-		this.board[62] = this.loadPiece("knight","nld129","white");
-		this.board[63] = this.loadPiece("rook","rld129","white");
-		
-		for(var i = 0;i < 8;++i) this.board[48 + i] = this.loadPiece("pawn","pdd129","black");
-		
-		this.board[11] = this.loadPiece("pawn","pdd129","black");
-		this.board[13] = this.loadPiece("pawn","pdd129","black");
-		this.board[51] = this.loadPiece("pawn","pld129","white");
-		this.board[53] = this.loadPiece("pawn","pld129","white");
-	}
-}
-
-
-
-
 class PersianRoulette extends ClassicChess {
 	name() {
 		return "PersianRoulette";
@@ -1214,31 +1227,157 @@ class PersianRoulette extends ClassicChess {
 		
 		for(var i = 0;i < 8;++i) this.board[48 + i] = this.loadPiece("pawn","pld129","white");
 	}
+
+	getMoves(board,i,j) {
+		/*var piece = board[i + 8 * j];
+		
+		var xs = [];
+		
+		if(piece != null)
+		switch(piece.shape) {
+			case "queen":
+			case "king":
+			    return xs;
+			    break;
+			
+			case "pawn":
+				if(piece.color == "black") {
+					//if(!board[i + 8 * (j + 1)]) xs.push([i,j + 2]);
+					xs.push([i + 1,j + 1]);		
+					xs.push([i - 1,j + 1]);		
+					xs.push([i + 1,j - 1]);		
+					xs.push([i - 1,j - 1]);		
+					xs.push([i + 0,j + 1]);		
+					xs.push([i + 0,j - 1]);		
+					xs.push([i + 1,j + 0]);		
+					xs.push([i - 1,j - 0]);		
+				} else {
+					//if(!board[i + 8 * (j - 1)]) xs.push([i,j - 2]);
+					xs.push([i + 1,j + 1]);		
+					xs.push([i - 1,j + 1]);		
+					xs.push([i + 1,j - 1]);		
+					xs.push([i - 1,j - 1]);		
+					xs.push([i + 0,j + 1]);		
+					xs.push([i + 0,j - 1]);		
+					xs.push([i + 1,j + 0]);		
+					xs.push([i - 1,j - 0]);		
+				}
+			    return xs;
+				break;
+
+		    default:*/
+		        return super.getMoves(board,i,j);
+        //}
+	}
 	
 	moveFilter(board,i,j,xs) {
-		xs = super.moveFilter(board,i,j,xs);
-		
 		var ys = [];
 		var piece = board[i + 8 * j];
 		
 		for(var k = 0;k < xs.length;++k) {
 			var x = xs[k];
-			var p = board[x[0] + 8 * x[1]];
-
-			var ok = true;
-			if(i == 3 || i == 4)
-				if(j == 3 || j == 4)
-					if(piece)
-						if(piece.shape == "queen" || piece.shape == "king")
-					if(p)
-						if(p.shape == "queen" || p.shape == "king")
-							ok = false;
 			
-			if(ok) ys.push(x);
+			if(x[0] >= 0 && x[0] <= 7 && x[1] >= 0 && x[1] <= 7) {
+		        if(piece.shape != "queen" && piece.shape != "king")
+				    switch(piece.shape) {
+					    case "pawn":
+						    if(
+							    (piece.color == "white" && j > x[1]) ||
+							    (piece.color == "black" && j < x[1])
+						    ) {
+							    if(Math.abs(x[0] - i) == 1) {
+								    if(board[x[0] + 8 * x[1]] && board[x[0] + 8 * x[1]].color != piece.color)
+									    ys.push(x);
+							    } else if(!board[x[0] + 8 * x[1]]){
+								    if(piece.color == "black" && j == 1)
+									    ys.push(x);
+								    else if(piece.color == "white" && j == 6)
+									    ys.push(x);
+								    else if(Math.abs(x[1] - j) == 1)
+									    ys.push(x);
+							    }
+						    }
+						    break;
+					    case "rook":
+					    case "bishop":
+					    case "queen":
+						    var found = false;
+						    var l;
+						    for(l = 1;l < Math.max(Math.abs(i - x[0]),Math.abs(j - x[1]));++l)
+							    if(
+								    board[Math.sign(x[0] - i) * l + i + 8 * (l * Math.sign(x[1] - j) + j)]
+								    
+							    ) {
+								    found = true;
+								    break;
+							    }
+								    
+						    if(!found)
+							    if(board[x[0] + 8 * x[1]] && board[x[0] + 8 * x[1]].color != piece.color)
+								    ys.push(x);
+							    else if(!board[x[0] + 8 * x[1]])
+								    ys.push(x);
+						    break;
+					    case "knight":
+					    case "king":
+						    if(board[x[0] + 8 * x[1]] && board[x[0] + 8 * x[1]].color != piece.color)
+							    ys.push(x);
+						    else if(!board[x[0] + 8 * x[1]])
+							    ys.push(x);
+						    break;
+					    default:
+						    ys.push(x);
+				    }
+			    }
+		}
+
+        if((board[4 + 3 * 8].shape != "king") || (board[3 + 4 * 8].shape != "king")) {
+		    var ws = [];
+		    for(var k = 0;k < ys.length;++k) {
+			    var x = ys[k];
+			    
+			    if(x[0] >= 0 && x[0] <= 7 && x[1] >= 0 && x[1] <= 7) {
+			        if(x[0] == 4 && x[1] == 3) {
+			            ws.push(x);
+			        } else if(x[0] == 3 && x[1] == 4) {
+			            ws.push(x);
+			        }
+		        }
+	        }
+	        ys = ws;
+	    }
+
+		var zs = [];
+		for(var y = 0;y < ys.length;++y) { 
+			var found = false;
+			
+			for(var z = 0;z < zs.length;++z) 
+				if((ys[y][0] == zs[z][0]) && (ys[y][1] == zs[z][1]))
+					found = true;
+			
+			if(!found) zs.push(ys[y]);
 		}
 		
-		return ys;
+		return zs;
 	}
+	
+	measureWhite(board) {
+		let cnt = 0;
+
+        if((board[4 + 3 * 8].shape != "king") || (board[3 + 4 * 8].shape != "king")) {
+            if(board[4 + 3 * 8].color == "white") {
+                return 1;
+            } else if(board[3 + 4 * 8].color == "white") {
+                return 1;
+            } else if(board[4 + 3 * 8].color == "black") {
+                return -1;
+            } else if(board[3 + 4 * 8].color == "black") {
+                return -1;
+            }
+        }
+		return cnt;
+	}
+
 }
 
 
@@ -1249,33 +1388,24 @@ class ZauberStrikeChess extends ClassicChess {
 		return "Zauber Strike Schach";
 	}
 
-	next(board) {
-		let c = board.color;
-		let c2 = board.color;
-		
-		if(c == "white")
-			c = "black";
-		else
-			c = "white";
-		
-		board.color = c;
-		
-		let ok = false;
+	measureWhite(board) {
+		let cnt = 0;
+
 		for(let i = 0;i < 8;++i)
-			for(let j = 0;j < 8;++j)
-				if(board[i + 8 * j] && board[i + 8 * j].color == c && this.getMoves(board,i,j).length > 0) {ok = true;break;}
+		for(let j = 0;j < 8;++j)
+		if(board[i + 8 * j])
+			cnt += this.ps[board[i + 8 * j].shape];
 		
-		board.color = c2;
-		if(ok) return c; else return c2;
+		return 32 - cnt;
 	}
 
 	init() {
-		this.ps["queen"] = 10000;
-		this.ps["rook"] = 1000;
-		this.ps["knight"] = 100;
-		this.ps["bishop"] = 100;
+		this.ps["queen"] = 1;
+		this.ps["rook"] = 1;
+		this.ps["knight"] = 1;
+		this.ps["bishop"] = 1;
 		this.ps["pawn"] = 1;
-		this.ps["king"] = 10;
+		this.ps["king"] = 1;
 		
 		this.board = [];
 		for(var i = 0;i < 64;++i) this.board.push(null);

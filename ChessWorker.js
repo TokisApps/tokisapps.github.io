@@ -43,6 +43,9 @@ onmessage = (msg) => {
 		case "ClassicChess":
 			me = new ClassicChess();
 			break;
+		case "BlitzChess":
+			me = new BlitzChess();
+			break;
 		case "ZauberStrikeChess":
 			me = new ZauberStrikeChess();
 			break;

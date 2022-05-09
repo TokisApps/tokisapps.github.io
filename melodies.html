@@ -2,6 +2,27 @@
 <head>
 <meta charset="utf-8">
 <script src="gpu-browser.min.js"></script>
+<script src="audio/ins/instrument12.js"></script>
+<script src="audio/ins/instrument19.js"></script>
+<script src="audio/ins/instrument3.js"></script>
+<script src="audio/ins/instrument11.js"></script>
+<script src="audio/ins/instrument13.js"></script>
+<script src="audio/ins/instrument10.js"></script>
+<script src="audio/ins/instrument1.js"></script>
+<script src="audio/ins/instrument6.js"></script>
+<script src="audio/ins/instrument8.js"></script>
+<script src="audio/ins/instrument18.js"></script>
+<script src="audio/ins/instrument4.js"></script>
+<script src="audio/ins/instrument7.js"></script>
+<script src="audio/ins/instrument16.js"></script>
+<script src="audio/ins/instrument5.js"></script>
+<script src="audio/ins/instrument15.js"></script>
+<script src="audio/ins/instrument0.js"></script>
+<script src="audio/ins/instrument2.js"></script>
+<script src="audio/ins/instrument14.js"></script>
+<script src="audio/ins/instrument9.js"></script>
+<script src="audio/ins/instrument17.js"></script>
+
 </head>
 <body>
 Progress : <span id="abc"></span>
@@ -30,7 +51,29 @@ xs.splice(i,1);
 return ys;
 }
 
+	let ins0 = [
+		instrument0,instrument1,instrument2,instrument3,instrument4,instrument5,instrument6,instrument7,instrument8,instrument9,instrument10,
+		instrument10,instrument11,instrument12,instrument13,instrument14,instrument15,instrument16,instrument17,instrument18,instrument19
+	];
+
+
+let ins = shuffle(ins0);
+
+
+function fractal(xs,start,end,decay,amp) {
+	let m = Math.round((start + end) / 2);
+	if(start == end) return;
+	if(start + 1 == end) return;
+	if(start == end - 1) return;
+	xs[m] = (xs[start] + xs[end]) / 2.0 + Math.random() * amp;
+	fractal(xs,start,m,decay,-decay * amp);
+	fractal(xs,m,end,decay,-decay * amp);
+}
+
+
+
 class Instrument {
+
 //per instrument
 constructor(sampleRate,tone,sustain,vol,vibOn) {
 	let leftVol = Math.random();
@@ -45,23 +88,38 @@ constructor(sampleRate,tone,sustain,vol,vibOn) {
 	});
 	gpu.addFunction(function rect(x) {
 		//return Math.round(Math.sin(x) + 1) - 1;
-		return mypow(Math.sin(x),0.01);
+		return mypow(Math.sin(x),0.1);
 	});
-	this.waveGPU = gpu.createKernel(function(rands,sampleRate,tone,sustain,vibOn) {
-		let x = 440.0 * this.thread.x / sampleRate * Math.PI * Math.pow(2.0,tone / 12.0);
-		let y = (rands[101] * Math.sin(x) + rands[102] * tooth(x) + rands[103] * rect(x));
-		y *= (Math.PI / 2 - Math.atan((this.thread.x - sampleRate * sustain) * (100 * rands[105] + 1.0))) / Math.PI;
-		let n = Math.round(5.0 * rands[100]) + 1;
-		for(let i = 0;i < n;++i) {
+	gpu.addFunction(function tooth2(x) {
+		//return Math.round(Math.sin(x) + 1) - 1;
+		return mypow(Math.sin(x),10);
+	});
+
+	this.waveGPU_ = gpu.createKernel(function(xs,sampleRate,tone,sustain,correction) {
+		let i = Math.round(this.thread.x / 2.0 * 2.0 * Math.pow(2.0,tone / 12.0)) * correction;
+
+		return xs[i] / 36000.0 * (Math.PI / 2 - Math.atan((this.thread.x / sampleRate - sustain - 0.1) * 10)) / Math.PI;;
+	}).setOutput([sampleRate]); // over 1 second
+
+	this.waveGPU2 = (function(rands,sampleRate,tone,sustain,vibOn,correction) {
+		return this.waveGPU_(this.instrument,sampleRate,tone,sustain,correction);
+	}).bind(this);
+
+	this.waveGPU = gpu.createKernel(function(rands,sampleRate,tone,sustain,vibOn,correction) {
+		let x = 440.0 * this.thread.x / sampleRate * Math.PI * Math.pow(2.0,tone / 12.0) * correction;
+		let y = 1;
+		for(let i = 0;i < 5;++i) {
 			var z = 0;
-			z += rands[10 * i + 0] * Math.sin(x * Math.pow(2.0,-(i * rands[i * 10 + 1])) + 10 * rands[i * 10 + 9]);
-			z += rands[10 * i + 2] * rect(x * Math.pow(2.0,-(i * rands[i * 10 + 3])) + 10 * rands[i * 10 + 9]);
-			z += rands[10 * i + 4] * tooth(x * Math.pow(2.0,-(i * rands[i * 10 + 5])) + 10 * rands[i * 10 + 9]);
-			z *= (Math.cos(this.thread.x * rands[i * 10 + 6] * 0.001) + 1) / 2;
-			if(vibOn > 0.5) z *= (Math.cos(x * Math.pow(2.0,-(5 * rands[i * 10 + 7]) - 12)) + 1) / 2;
-			y += rands[10 * i + 8] * z * (Math.PI / 2 - Math.atan((this.thread.x / sampleRate - sustain - 0.1) * 10)) / Math.PI;
+			for(let j = 0;j < 5;++j) {
+				let k = (i * 5 + j) * 5;
+				let p = 0.5 * rands[k + 4] + 1 + 0.5 * rands[201];
+				if(rands[k + 5] < 0.5) p = 1 / p;
+				z += rands[k + 1] * mypow(Math.sin(x + 4 * rands[200] * rands[k + 3]),p);
+			}
+			y *= z;
 		}
-		return y;
+		if(vibOn > 0.5) y *= 0.5 * Math.cos(x * 0.002) + 0.5;
+		return y * (Math.PI / 2 - Math.atan((this.thread.x / sampleRate - sustain - 0.1) * 10)) / Math.PI;
 	}).setOutput([sampleRate]); // over 1 second
 	this.fGPU = gpu.createKernel(function(xs) {
 		let s = 0;
@@ -72,40 +130,66 @@ constructor(sampleRate,tone,sustain,vol,vibOn) {
 	this.madd = gpu.createKernel(function(nowBuffering,offset,xs,f) {
 		return nowBuffering[this.thread.x + offset] + xs[this.thread.x] * f;
 	}).setOutput([sampleRate]);
-	this.normalize = gpu.createKernel(function(xs,factor) {
-		return xs[this.thread.x] * factor;
+	this.normalize = gpu.createKernel(function(xs,mi,ma) {
+		return 2 * (xs[this.thread.x] - mi) / (ma - mi) - 1;
 	}).setOutput([sampleRate]);
 	
 	this.sampleRate = sampleRate;
-	this.rands = [];
-	for(let i = 0;i < 1000;++i) this.rands.push(Math.random());
+	this.rands = new Float32Array(2000);
+	for(let i = 0;i < this.rands.length;++i) this.rands[i] = Math.random();
 	let r = 0.25 * Math.random() + 1;
 	this.sustain = sustain * (Math.random() < 0.5 ? r : 1.0 / r);
 	this.vol = vol;
 	this.tone = tone;
 	this.vibOn = vibOn;
 	
-	let xs = this.waveGPU(this.rands,sampleRate,12,this.sustain,this.vibOn);
+/*****************
+	let xs = this.waveGPU(this.rands,sampleRate,0,this.sustain,this.vibOn,1);
+	
+	var min = 100000;
+	var max = -100000;
+	for(let i = 0;i < xs.length;++i) if(xs[i] > max) max = xs[i]; else if(xs[i] < min) min = xs[i];
+	//xs = this.normalize(xs,1.0 / y);
+	for(let i = 0;i < xs.length;++i) xs[i] = 2 * (xs[i] - min) / (max - min) - 1;
 
 
 	//****** Fourier Search ******
 	let fourier = gpu.createKernel(function(xs,len,sampleRate) {
-		let sums = 0;
-		let sumc = 0;
-		for(let i = 0;i < len;++i) {
-			let x = 440.0 * i / sampleRate * 2 * Math.PI * Math.pow(2.0,(this.thread.x / 100.0 - 48.0) / 12.0);
-			sums += Math.sin(x) * xs[i];
-			sumc += Math.cos(x) * xs[i];
+		let sum = 0;
+		let n = 10;
+		for(let j = 0;j < 10;++j) {
+			let sum2 = 0;
+			for(let i = 0;i < len;++i) {
+				let x = 440.0 * (i / sampleRate + j / n) * Math.PI * Math.pow(2.0,this.thread.x / 12.0);
+				sum2 += Math.abs(Math.sin(x) - xs[i]);
+			}
+			sum2 /= len;
+			sum += sum2;
 		}
-		return Math.sqrt(sums * sums + sumc * sumc);
+		sum /= len;
+		return sum;
 	}).setOutput([9600]); // +/- 1 octave
 	let fs = fourier(xs,xs.length,sampleRate);
 	
 	let imax = 0;
 	let fmax = 0;
-	for(let i = 0;i < fs.length;++i) if(fs[i] > fmax) {fmax = fs[i];imax = i;}
-	/*console.log(imax);
-	this.tone += (4800 - imax) / 100;*/
+	for(let i = 0;i < fs.length;++i) if(fs[i] >= fmax) {fmax = fs[i];imax = i;}
+	console.log(imax);
+	this.correction = 1;//Math.pow(2.0,-(4800 - imax) / 1200.0)	;
+	console.log(this.correction);
+	//this.tone += (4800 - imax) / 1000.0;
+
+
+	xs = this.waveGPU(this.rands,sampleRate,-(4800 - imax) / 1000.0,this.sustain,this.vibOn,1);
+	y = 0;
+	for(let i = 0;i < xs.length;++i) if(Math.abs(xs[i]) > y) y = Math.abs(xs[i]);
+	xs = this.normalize(xs,1.0 / y);
+	fs = fourier(xs,xs.length,sampleRate);
+	
+	imax = 0;
+	fmax = 0;
+	for(let i = 0;i < fs.length;++i) if(fs[i] >= fmax) {fmax = fs[i];imax = i;}
+	console.log(imax);*****************/
 }
 
 //per tone
@@ -114,15 +198,16 @@ render(buffer,offset,tone,sustain,vol) {
 	const channels = 2;
 	for(var channel = 0; channel < channels; channel++) {
 	var nowBuffering = buffer.getChannelData(channel);
-	var xs = this.waveGPU(this.rands,this.sampleRate,this.tone + tone,this.sustain * sustain,this.vibOn);
-	var y = 0;
-	for(let i = 0;i < xs.length;++i) if(Math.abs(xs[i]) > y) y = Math.abs(xs[i]);
-	xs = this.normalize(xs,1.0 / y);
+	var xs = this.waveGPU(this.rands,this.sampleRate,this.tone + tone,this.sustain * sustain,this.vibOn,1);
+	var min = 100000;
+	var max = -100000;
+	for(let i = 0;i < xs.length;++i) if(xs[i] > max) max = xs[i]; else if(xs[i] < min) min = xs[i];
+	xs = this.normalize(xs,min,max);
 	var ys = this.fGPU(xs);
 	var imin = 200;
-	y = 1000000;
+	let y = 1000000;
 	for(let i = 200;i < ys.length - 200;++i) if(Math.abs(xs[i]) > 0.5) if(Math.abs(ys[i]) < y) {y = Math.abs(ys[i]);imin = i;}
-	var zs = this.madd(nowBuffering,offset + n,xs,0.1 * this.vol * vol * this.chVols[channel] / Math.abs(xs[imin]));
+	var zs = this.madd(nowBuffering,offset + n,xs,0.02 * this.vol * vol * this.chVols[channel]);// / Math.abs(xs[imin]));
 	for(let i = 0;i < xs.length;++i) if(i + offset + n < nowBuffering.length) nowBuffering[i + offset + n] = zs[i];
 }	
 }
@@ -274,7 +359,7 @@ play();
 var speed;
 
 function sound() {
-speed = 0.11 + 0.14 * Math.random();
+speed = 0.14 + 0.06 * Math.random();
 window.setTimeout(() => {
 if(!computing) {
 computing = true;
@@ -286,15 +371,20 @@ frameCount = audioCtx.sampleRate * seconds;
 myArrayBuffer = audioCtx.createBuffer(channels, frameCount, audioCtx.sampleRate);
 
 ms = [];
+ins = shuffle(ins0);
+
 //Drums
 let sust;
 sust = 0.2 * Math.random() + 0.1;
-for(let i = 0;i < 3;++i) ms.push(new Melody(4,-1,new Instrument(audioCtx.sampleRate,-24,sust,3,1)));
+ins = new Instrument(audioCtx.sampleRate,-24,sust,2 + Math.random(),Math.random())
+for(let i = 0;i < 3;++i) ms.push(new Melody(4,-1,ins));
 sust = 0.2 * Math.random() + 0.1;
-for(let i = 0;i < 3;++i) ms.push(new Melody(1,-1,new Instrument(audioCtx.sampleRate,-12,sust,2,1)));
+ins = new Instrument(audioCtx.sampleRate,-12,sust,1 + Math.random(),Math.random());
+for(let i = 0;i < 3;++i) ms.push(new Melody(1,-1,ins));
 //Sound
 sust = 0.2 * Math.random() + 0.1;
-for(let i = 0;i < 3;++i) ms.push(new Melody(2,-1,new Instrument(audioCtx.sampleRate,0,sust,1,0)));
+ins = new Instrument(audioCtx.sampleRate,0,sust,1,Math.random());
+for(let i = 0;i < 3;++i) ms.push(new Melody(2,-1,ins));
 
 make();
 } else window.setTimeout(sound,10);
@@ -344,4 +434,6 @@ scale : <span id="cscale"></span>
 
 </body>
 </html>
+
+
 
