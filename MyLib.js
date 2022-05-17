@@ -1270,12 +1270,12 @@ class ZauberStrikeChess extends ClassicChess {
 	}
 
 	init() {
-		this.ps["queen"] = 10000;
-		this.ps["rook"] = 1000;
-		this.ps["knight"] = 100;
-		this.ps["bishop"] = 100;
+		this.ps["queen"] = 8;
+		this.ps["rook"] = 6;
+		this.ps["knight"] = 3;
+		this.ps["bishop"] = 3;
 		this.ps["pawn"] = 1;
-		this.ps["king"] = 10;
+		this.ps["king"] = 2;
 		
 		this.board = [];
 		for(var i = 0;i < 64;++i) this.board.push(null);

@@ -97,19 +97,26 @@ constructor(sampleRate,tone,sustain,vol,vibOn,cvName) {
 
 	this.waveGPU_ = gpu.createKernel(function(xs,len,rands,sampleRate,tone,sustain,vibOn,correction) {
 		let x = 440.0 * this.thread.x / sampleRate * Math.PI * Math.pow(2.0,tone / 12.0) * correction;
-		let z = 0;
-		let n = rands[104] * 6 + 1;
-		for(let i = 0;i < n;++i) {
-			let k = i * 10;
-			let p = 2 * rands[k + 0] + 1.0;
-			if(rands[k + 1] < 0.5) p = 1.0 / p;
-			z += rands[k + 2] * mypow(Math.sin(x + Math.PI * 2 * rands[k + 3]),p);
-			let a = Math.pow(2.0,-rands[k + 4] * 2.0 - 1);
-			z += rands[k + 7] * xs[(Math.round(this.thread.x * a + len * rands[k + 8])) % len];
+		let y = 1;
+		for(let i = 1;i <= 1;++i) {
+			let g = i * 5;
+			var z = 0;
+			for(let j = 0;j < 1;++j) {
+				let k = (i * 5 + j) * 5;
+				let p = rands[k + 4] + 1.0;
+				if(rands[k + 5] < 0.5) 
+				p = 1.0 / p;
+				let h = i * 5.0 + j + 1.0;
+				z += rands[k + 0] * mypow(Math.sin(x + Math.PI * 2 * rands[k + 1]),p);
+				if(rands[k + 6] < 0.5) z += rands[k + 2] * xs[Math.round(this.thread.x /  2 + Math.round(100 * rands[k + 3])) % len];
+				if(rands[k + 7] < 0.5) z += rands[k + 4] * rect(x / 2 + Math.PI * 2 * rands[k + 5]);
+				//z += rands[k + 9] * tooth(x / 16 + Math.PI * 2 * rands[k + 8]);
+			}
+			y *= z;
 		}
-		let xy = 0.2 * rands[100] * rands[100];
-		z *= xy * Math.cos(x * Math.pow(2,-Math.floor(rands[101] * 4.0 + 1.0))) + 1 - xy;
-		return z;
+		let xy = 0.4 * rands[101];
+		y *= xy * Math.cos(x * Math.pow(2,-Math.round(rands[100] * 4))) + 1 - xy;
+		return y;// * (Math.PI / 2 - Math.atan((this.thread.x / sampleRate - sustain - 0.01) * 50)) / Math.PI;
 	}).setOutput([sampleRate]); // over 1 second
 
 	let normalize = function(xs) {
@@ -175,7 +182,7 @@ render(buffer,offset,tone,sustain,vol) {
 	var imin = 200;
 	let y = 1000000;
 	for(let i = 200;i < ys.length - 200;++i) if(Math.abs(xs[i]) > 0.5) if(Math.abs(ys[i]) < y) {y = Math.abs(ys[i]);imin = i;}
-	var zs = this.madd(nowBuffering,offset + n,xs,0.05 * this.vol * vol * this.chVols[channel]);
+	var zs = this.madd(nowBuffering,offset + n,xs,0.01 * this.vol * vol * this.chVols[channel] / y);
 	for(let i = 0;i < xs.length;++i) if(i + offset + n < nowBuffering.length) nowBuffering[i + offset + n] = zs[i];
 }	
 }
@@ -290,7 +297,6 @@ document.getElementById("cbasesteps").innerHTML = document.getElementById("bases
 document.getElementById("csteps").innerHTML = document.getElementById("steps").innerHTML;
 document.getElementById("cnewbasescale").innerHTML = document.getElementById("newbasescale").innerHTML;
 document.getElementById("cscale").innerHTML = document.getElementById("scale").innerHTML;
-document.getElementById("cv2").src = document.getElementById("cv1").toDataURL();
 
 playing = true;
 
@@ -375,7 +381,7 @@ Seconds :
 Fancy Random : <input type="checkbox" id="fr">
 
 <fieldset>
-<legend>Upcoming Data</legend>
+<legend>Upcoming Scale Data</legend>
 base : <span id="base"></span>
 <br>
 base steps : <span id="basesteps"></span>
@@ -385,12 +391,11 @@ steps : <span id="steps"></span>
 new base scale : <span id="newbasescale"></span>
 <br>
 scale : <span id="scale"></span>
-<canvas width=800 height=800 style="width:100%;height:200px" id="cv1"></canvas>
 </fieldset>
 
 
 <fieldset>
-<legend>Current Data</legend>
+<legend>Current Scale Data</legend>
 base : <span id="cbase"></span>
 <br>
 base steps : <span id="cbasesteps"></span>
@@ -400,9 +405,9 @@ steps : <span id="csteps"></span>
 new base scale : <span id="cnewbasescale"></span>
 <br>
 scale : <span id="cscale"></span>
-<img width=800 height=800 style="width:100%;height:200px" id="cv2"></canvas>
 </fieldset>
 
+<canvas width=800 height=800 style="width:100%;height:200px" id="cv1"></canvas>
 </body>
 </html>
 

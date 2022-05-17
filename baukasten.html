@@ -6,7 +6,7 @@
 
 <body>
 
-<div id="abc">
+<div id="abc" style="width:80%;margin-left:19%">
 <script src="MyLib.js"></script>
 
 <script>
@@ -362,6 +362,72 @@ class ChessBoard extends Board {
 		for(var i = 0;i < 8;++i) this.board[48 + i] = this.loadPiece("pawn","pld129","white");
 	}
 	
+	blitzschach() {
+		this.board = [];
+		for(var i = 0;i < 64;++i) this.board.push(null);
+		
+		this.board[0] = this.loadPiece("rook","rdd129","black");
+		this.board[1] = this.loadPiece("knight","ndd129","black");
+		this.board[2] = this.loadPiece("bishop","bdd129","black");
+		this.board[3] = this.loadPiece("queen","qdd129","black");
+		this.board[4] = this.loadPiece("king","kdd129","black");
+		this.board[5] = this.loadPiece("bishop","bdd129","black");
+		this.board[6] = this.loadPiece("knight","ndd129","black");
+		this.board[7] = this.loadPiece("rook","rdd129","black");
+		
+		for(var i = 0;i < 8;++i) this.board[8 + i] = this.loadPiece("pawn","pld129","white");
+		
+		this.board[56] = this.loadPiece("rook","rld129","white");
+		this.board[57] = this.loadPiece("knight","nld129","white");
+		this.board[58] = this.loadPiece("bishop","bld129","white");
+		this.board[59] = this.loadPiece("queen","qld129","white");
+		this.board[60] = this.loadPiece("king","kld129","white");
+		this.board[61] = this.loadPiece("bishop","bld129","white");
+		this.board[62] = this.loadPiece("knight","nld129","white");
+		this.board[63] = this.loadPiece("rook","rld129","white");
+		
+		for(var i = 0;i < 8;++i) this.board[48 + i] = this.loadPiece("pawn","pdd129","black");
+		
+		this.board[11] = this.loadPiece("pawn","pdd129","black");
+		this.board[13] = this.loadPiece("pawn","pdd129","black");
+		this.board[51] = this.loadPiece("pawn","pld129","white");
+		this.board[53] = this.loadPiece("pawn","pld129","white");
+		
+		this.initCards();
+		this.render();
+	}
+
+	persianroulette() {
+		this.board = [];
+		for(var i = 0;i < 64;++i) this.board.push(null);
+		
+		this.board[2] = this.loadPiece("rook","rdd129","black");
+		this.board[0] = this.loadPiece("knight","ndd129","black");
+		this.board[1] = this.loadPiece("bishop","bdd129","black");
+		this.board[27] = this.loadPiece("queen","qdd129","black");
+		this.board[28] = this.loadPiece("king","kdd129","black");
+		this.board[6] = this.loadPiece("bishop","bdd129","black");
+		this.board[7] = this.loadPiece("knight","ndd129","black");
+		this.board[5] = this.loadPiece("rook","rdd129","black");
+		
+		for(var i = 0;i < 8;++i) this.board[8 + i] = this.loadPiece("pawn","pdd129","black");
+		
+		this.board[58] = this.loadPiece("rook","rld129","white");
+		this.board[56] = this.loadPiece("knight","nld129","white");
+		this.board[57] = this.loadPiece("bishop","bld129","white");
+		this.board[36] = this.loadPiece("queen","qld129","white");
+		this.board[35] = this.loadPiece("king","kld129","white");
+		this.board[62] = this.loadPiece("bishop","bld129","white");
+		this.board[63] = this.loadPiece("knight","nld129","white");
+		this.board[61] = this.loadPiece("rook","rld129","white");
+		
+		for(var i = 0;i < 8;++i) this.board[48 + i] = this.loadPiece("pawn","pld129","white");
+
+		this.initCards();
+		this.render();
+	}
+
+
 	loadPiece(name,imgName,color) {
 		var y = {};
 		
@@ -406,7 +472,8 @@ function shuffle(xs) {
 
 class CardSet extends Board {
 	reset() {
-		this.w = this.h = 7;
+		this.w = 8;
+		this.h = 7;
 	
 		let xs = ["d","h","s","c"];
 		let ys = [0,1,10,11];
@@ -454,7 +521,7 @@ class KieferTarotCardSet extends Board {
 	
 		this.board = [];
 		
-		for(let i = 0;i <= 12;++i) {
+		for(let i = 0;i <= 15;++i) {
 			let y = document.createElement("img");
 			y.src1 = "img/img" + i + ".png";
 			y.src2 = "img/back05.png";
@@ -497,8 +564,34 @@ document.getElementById("abc").appendChild(eb.domDiv);
 eb.domDiv.style.height = "30%";
 eb.domDiv.style.float = "left";
 	
+	
+function wuerfelAbraeumen() {
+	for(let i = 0;i < 20;++i) {
+		eb.board[80 + i] = cs.board[i];
+		cs.board[i] = null;
+	}
+	
+	for(let i = 0;i < 16;++i) {
+		eb.board[40 + i] = ds.board[i];
+		ds.board[i] = null;
+	}
+	
+	ds.render();
+	eb.render();
+	cs.render();
+}
+
 </script>
 	</div>
+	
+	<fieldset style="border-style:groove;width:15%;position:absolute">
+		<legend>Games</legend>
+		<ol>
+			<button onclick="cb.blitzschach()">Biltzschach</button>
+			<button onclick="cb.persianroulette()">PersianRoulette</button>
+			<button onclick="wuerfelAbraeumen()">WuerfelAbraeumen</button>
+		</ol>
+	</fieldset>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
 </body>
