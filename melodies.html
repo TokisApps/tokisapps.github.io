@@ -314,12 +314,11 @@ frameCount = audioCtx.sampleRate * seconds;
 myArrayBuffer = audioCtx.createBuffer(channels, frameCount, audioCtx.sampleRate);
 
 ms = [];
-ins = shuffle(ins0);
-
+	
 //Drums
 let sust;
 sust = 0.3 * Math.random() + 0.2;
-ins = new Instrument(audioCtx.sampleRate,-24,sust,1,Math.random())
+var ins = new Instrument(audioCtx.sampleRate,-24,sust,1,Math.random())
 //for(let i = 0;i < 3;++i) ms.push(new Melody(4,-1,ins));
 sust = 0.3 * Math.random() + 0.2;
 ins = new Instrument(audioCtx.sampleRate,-12,sust,1,Math.random());
