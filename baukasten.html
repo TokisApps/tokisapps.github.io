@@ -398,7 +398,19 @@ class ChessBoard extends Board {
 	}
 
 	persianroulette() {
-		this.board = [];
+		this.reset();
+		
+		this.board[27] = this.board[3];
+		this.board[28] = this.board[4];
+		this.board[3] = null;
+		this.board[4] = null;
+		
+		this.board[36] = this.board[59];
+		this.board[35] = this.board[60];
+		this.board[59] = null;
+		this.board[60] = null;
+		
+		/*this.board = [];
 		for(var i = 0;i < 64;++i) this.board.push(null);
 		
 		this.board[2] = this.loadPiece("rook","rdd129","black");
@@ -421,7 +433,7 @@ class ChessBoard extends Board {
 		this.board[63] = this.loadPiece("knight","nld129","white");
 		this.board[61] = this.loadPiece("rook","rld129","white");
 		
-		for(var i = 0;i < 8;++i) this.board[48 + i] = this.loadPiece("pawn","pld129","white");
+		for(var i = 0;i < 8;++i) this.board[48 + i] = this.loadPiece("pawn","pld129","white");*/
 
 		this.initCards();
 		this.render();
@@ -444,10 +456,10 @@ class ChessBoard extends Board {
 
 class DiceSet extends Board {
 	reset() {
-		this.w = this.h = 4;
+		this.w = this.h = 5;
 		this.board = [];
 		
-		for(let i = 1;i <= 16;++i) {
+		for(let i = 1;i <= this.w * this.h;++i) {
 			let y = document.createElement("img");
 			y.src1 = "img/Alea_" + Math.trunc(6 * Math.random() + 1) + ".png";
 			y.src2 = "img/back03.png";
@@ -516,20 +528,37 @@ class RWTarotCardSet extends Board {
 }
 
 class KieferTarotCardSet extends Board {
+	load(fn,i) {
+			let y = document.createElement("img");
+			y.src1 = "img/" + fn + ".png";
+			y.src2 = "img/back05.png";
+			y.src = y.src2;
+			y.index = i;
+			this.board.push(y);
+	}
+	
 	reset() {
 		this.w = this.h = 4;
 	
 		this.board = [];
 		
-		for(let i = 0;i <= 15;++i) {
-			let y = document.createElement("img");
-			y.src1 = "img/img" + i + ".png";
-			y.src2 = "img/back05.png";
-			y.src = y.src2;
-			y.index = i;
-			this.board.push(y);
-		}
-		
+		this.load("contra");
+		this.load("pro");
+		this.load("erziehung");
+		this.load("zugehörigkeit");
+		this.load("zusammenführung");
+		this.load("widerstand");
+		this.load("punkt");
+		this.load("zahl");
+		this.load("echo");
+		this.load("sympathie");
+		this.load("filter");
+		this.load("horizont");
+		this.load("stop");
+		this.load("umlauf");
+		this.load("umbau");
+		this.load("verzweigung");
+				
 		this.board = shuffle(this.board);
 	}
 }
@@ -567,12 +596,16 @@ eb.domDiv.style.float = "left";
 	
 function wuerfelAbraeumen() {
 	for(let i = 0;i < 20;++i) {
-		eb.board[80 + i] = cs.board[i];
+		let x = cs.board[i];
+		eb.board[80 + i] = x;
+		x.onload = eb.render.bind(eb);
 		cs.board[i] = null;
 	}
 	
-	for(let i = 0;i < 16;++i) {
-		eb.board[40 + i] = ds.board[i];
+	for(let i = 0;i < ds.board.length;++i) {
+		let x = ds.board[i];
+		eb.board[40 + i] = x;
+		x.onload = eb.render.bind(eb);
 		ds.board[i] = null;
 	}
 	
