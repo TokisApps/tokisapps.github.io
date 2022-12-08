@@ -68,11 +68,20 @@
         
         ctx.putImageData(data,0,0);
         
-        c.re += 0.01 * (Math.random() - 0.5);
-        c.im += 0.01 * (Math.random() - 0.5);
-        c2.re += 0.01 * (Math.random() - 0.5);
-        c2.im += 0.01 * (Math.random() - 0.5);
-        
+        c.re += 0.1 * (Math.random() - 0.5);
+        c.im += 0.1 * (Math.random() - 0.5);
+        c2.re += 0.1 * (Math.random() - 0.5);
+        c2.im += 0.1 * (Math.random() - 0.5);
+            if(c.re > 5) c.re = 5;
+            if(c.re < -5) c.re = -5;
+            if(c.im > 5) c.im = 5;
+            if(c.im < -5) c.im = -5;
+
+            if(c2.re > 5) c2.re = 5;
+            if(c2.re < -5) c2.re = -5;
+            if(c2.im > 5) c2.im = 5;
+            if(c2.im < -5) c2.im = -5;
+
             /*c = (c.add(new Complex(0.002 * (Math.random() - 0.5),0.002 * (Math.random() - 0.5)))).exp().add(new Complex(0.002 * (Math.random() - 0.5),0.002 * (Math.random() - 0.5)));
             c2 = (c2.add(new Complex(0.002 * (Math.random() - 0.5),0.002 * (Math.random() - 0.5)))).exp().add(new Complex(0.002 * (Math.random() - 0.5),0.002 * (Math.random() - 0.5)));
             
