@@ -9,13 +9,15 @@
     
     <script>
         var size = 5;
-        var c = new Complex(2 * size * (Math.random() - 0.5),2 * size * (Math.random() - 0.5));
-        var c2 = new Complex(2 * size * (Math.random() - 0.5),2 * size * (Math.random() - 0.5));
+        var c = new Complex(0);
+        var c2 = new Complex(0);
+        var cv = new Complex(0);
+        var c2v = new Complex(0);
         
         window.setInterval(() => {
         if(!document.getElementById("ab").checked) return;
-        var cv = document.getElementById("xy");
-        var ctx = cv.getContext("2d");
+        var canv = document.getElementById("xy");
+        var ctx = canv.getContext("2d");
         
         var mxmin = -10;
         var mxmax = 10;
@@ -24,15 +26,15 @@
         var summin = 10000000;
         var summax = -10000000;
         
-        var data = ctx.getImageData(0,0,cv.width,cv.height);
+        var data = ctx.getImageData(0,0,canv.width,canv.height);
         var dat = data.data;
         
         var args = [];
-        for(var x = 0;x < cv.width;++x) {
-            var mx = x * (mxmax - mxmin) / cv.width + mxmin;
+        for(var x = 0;x < canv.width;++x) {
+            var mx = x * (mxmax - mxmin) / canv.width + mxmin;
             var arg = [];
-            for(var y = 0;y < cv.height;++y) {
-                var my = y * (mymax - mymin) / cv.height + mymin;
+            for(var y = 0;y < canv.height;++y) {
+                var my = y * (mymax - mymin) / canv.height + mymin;
                 
                 var sum = 0;
                 var z = new Complex(mx,my);
@@ -75,20 +77,27 @@
         
         ctx.putImageData(data,0,0);
         
-        c.re += size / 10.0 * (Math.random() - 0.5);
-        c.im += size / 10.0 * (Math.random() - 0.5);
-        c2.re += size / 10.0 * (Math.random() - 0.5);
-        c2.im += size / 10.0 * (Math.random() - 0.5);
-            if(c.re > size) c.re = size;
-            if(c.re < -size) c.re = -size;
-            if(c.im > size) c.im = size;
-            if(c.im < -size) c.im = -size;
+        cv = new Complex((Math.random() - 0.5),(Math.random() - 0.5)).add(cv);
+        c2v = new Complex((Math.random() - 0.5),(Math.random() - 0.5)).add(c2v);
+        c = c.add(cv.mul(0.1));
+        c2 = c2.add(c2v.mul(0.1));
 
-            if(c2.re > size) c2.re = size;
-            if(c2.re < -size) c2.re = -size;
-            if(c2.im > size) c2.im = size;
-            if(c2.im < -size) c2.im = -size;
+        console.log(cv);
+        console.log(c2v);
+        console.log(c);
+        console.log(c2);
+        
+            if(c.re > size) {c.re = size;cv.re = 0;}
+            if(c.re < -size) {c.re = -size;cv.re = 0;}
+            if(c.im > size) {c.im = size;cv.im = 0;}
+            if(c.im < -size) {c.im = -size;cv.im = 0;}
 
+            if(c2.re > size) {c2.re = size;c2v.re = 0;}
+            if(c2.re < -size) {c2.re = -size;c2v.re = 0;}
+            if(c2.im > size) {c2.im = size;c2v.im = 0;}
+            if(c2.im < -size) {c2.im = -size;c2v.im = 0;}
+
+ 
             /*c = (c.add(new Complex(0.002 * (Math.random() - 0.5),0.002 * (Math.random() - 0.5)))).exp().add(new Complex(0.002 * (Math.random() - 0.5),0.002 * (Math.random() - 0.5)));
             c2 = (c2.add(new Complex(0.002 * (Math.random() - 0.5),0.002 * (Math.random() - 0.5)))).exp().add(new Complex(0.002 * (Math.random() - 0.5),0.002 * (Math.random() - 0.5)));
             
