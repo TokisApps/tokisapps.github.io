@@ -12,8 +12,17 @@
         var size = 5;
         var c = new Complex(0);
         var c2 = new Complex(0);
+        var c3 = new Complex(0);
         var cv = new Complex(0);
         var c2v = new Complex(0);
+        var c3v = new Complex(0);
+
+
+    function f(z) {
+        //return (z.add(c2).exp()).add(c);
+        return (z.pow(c3).sub(1)).add(z.add(c2).exp()).add(c);
+    }
+    
         
         window.setInterval(() => {
         if(!document.getElementById("ab").checked) return;
@@ -44,7 +53,7 @@
         if(document.getElementById("cd").checked) {
 
                 for(var i = 0;i < 30;++i) {
-                    var z2 = (z.add(c2)).exp().add(c);
+                    var z2 = f(z);
                     var sum2 = sum + 0.1 * Math.abs(z.arg() - z2.arg());
                     if(Number.isFinite(sum2)) sum = sum2; else sum = 0;
                     if(z2.isFinite()) z = z2; else z = new Complex(0,0);
@@ -56,7 +65,7 @@
                 var zs = [];
                 
                 for(var i = 0;i < 30;++i) {
-                    var z2 = (z.add(c2)).exp().add(c);
+                    var z2 = f(z);
                     if(zs.length >= 3) {
                         var sum2 = sum + Math.abs(
                             zs[zs.length - 1].sub(zs[zs.length - 2]).arg() - 
@@ -97,8 +106,12 @@
         
         cv = new Complex((Math.random() - 0.5),(Math.random() - 0.5)).add(cv);
         c2v = new Complex((Math.random() - 0.5),(Math.random() - 0.5)).mul(0.1).add(c2v);
+        c3v = new Complex((Math.random() - 0.5),(Math.random() - 0.5)).mul(0.1).add(c3v);
         c = c.add(cv.mul(0.01));
         c2 = c2.add(c2v.mul(0.01));
+        c3 = c3.add(c3v.mul(0.01));
+        
+        console.log(z.pow(c3).sub(1));
 
 /*
         console.log(cv);
