@@ -96,9 +96,9 @@
         ctx.putImageData(data,0,0);
         
         cv = new Complex((Math.random() - 0.5),(Math.random() - 0.5)).add(cv);
-        c2v = new Complex((Math.random() - 0.5),(Math.random() - 0.5)).add(c2v);
+        c2v = new Complex((Math.random() - 0.5),(Math.random() - 0.5)).mul(0.1).add(c2v);
         c = c.add(cv.mul(0.01));
-        c2 = c2.add(c2v.mul(0.01).mul(0.1));
+        c2 = c2.add(c2v.mul(0.01));
 
 /*
         console.log(cv);
